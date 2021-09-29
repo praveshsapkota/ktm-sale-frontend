@@ -1,8 +1,10 @@
 * {
 	margin: 0px;
+	/* overflow-x: hidden; */
 }
 
-/* body{
-    display: flex;
-    background-color: whitesmoke;
-} */
+body {
+	/* display: flex;
+    background-color: whitesmoke; */
+	overflow-x: hidden;
+}

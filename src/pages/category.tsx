@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image"
 import { useQuery } from "@apollo/client";
 import { Catagory } from "../graphql/Query/catagory";
 import { subCatagory_name } from "../graphql/Query/subCatagory";
@@ -7,9 +8,12 @@ import {
 	SubCatagoryWrapper,
 	TopMenu,
 	MainDiv,
+	StatusFalse,
+	StatusTrue,
 } from "../styles/catagory.styles";
 import {
 	FormControl,
+	Chip,
 	InputLabel,
 	MenuItem,
 	Autocomplete,
@@ -27,7 +31,8 @@ import {
 	IconButton,
 } from "@material-ui/core";
 import { usedrawerStore } from "../store/drawerStore";
-interface props {}
+import { Height } from "@material-ui/icons";
+interface props { }
 
 export const Catagories: React.FC<props> = () => {
 	const [catagory, setCatagory] = React.useState("");
@@ -71,137 +76,144 @@ export const Catagories: React.FC<props> = () => {
 	return (
 		<MainDiv>
 			<TopMenu>
-				<Grid
-					container
-					rowSpacing="10"
-					columnSpacing="10"
-					sx={{
-						justifyContent: "space-around",
-						alignItems: "center",
-						backgroundColor: "white",
-						margin: "5px",
-						padding: "20px 0px",
-						width: "90vw",
-					}}
-				>
-					<Grid item xs={8} sm={8} md={2} style={{}}>
-						<span
-							style={{
-								fontFamily: "monospace",
-								fontSize: "20px",
-								fontWeight: "bold",
-								color: "Black",
-							}}
-						>
-							Catagory / SubCatagory
-						</span>
-					</Grid>
-					<Grid item xs={8} sm={8} md={2} style={{}}>
-						<div>
-							<FormControl
-								sx={{
-									width: "100%",
-									minWidth: 150,
-									backgroundColor: "whitesmoke",
+				<Paper elevation={6}>
+					<Grid
+						container
+						rowSpacing="10"
+						columnSpacing="10"
+						sx={{
+							justifyContent: "space-around",
+							alignItems: "center",
+							backgroundColor: "white",
+							margin: "5px",
+							padding: "20px 0px",
+							width: "90vw",
+						}}
+					>
+						<Grid item xs={8} sm={8} md={2} style={{}}>
+							<span
+								style={{
+									fontFamily: "monospace",
+									fontSize: "20px",
+									fontWeight: "bold",
+									color: "Black",
 								}}
 							>
-								<InputLabel id="demo-simple-select-autowidth-label">
-									Catagory
-								</InputLabel>
-								<Select
-									labelId="demo-simple-select-autowidth-label"
-									id="demo-simple-select-autowidth"
-									value={subCatagory}
-									onChange={handleChangeSubCatagory}
-									// autoWidth
-									label="Catagory"
+								Catagory / SubCatagory
+							</span>
+						</Grid>
+						<Grid item xs={8} sm={8} md={2} style={{}}>
+							<div>
+								<FormControl
+									sx={{
+										width: "100%",
+										minWidth: 150,
+										backgroundColor: "whitesmoke",
+									}}
 								>
-									{subCatagoryData ? (
-										subCatagoryData.subCatagories.map(
-											(iteam: any, index: any) => {
-												return (
-													<MenuItem key={index} value={iteam.name}>
-														<em>{iteam.name}</em>
-													</MenuItem>
-												);
-											}
-										)
-									) : (
-										<MenuItem value={undefined}>
-											<em>None</em>
-										</MenuItem>
-									)}
-								</Select>
-							</FormControl>
-						</div>
+									<InputLabel id="demo-simple-select-autowidth-label">
+										Catagory
+									</InputLabel>
+									<Select
+										labelId="demo-simple-select-autowidth-label"
+										id="demo-simple-select-autowidth"
+										value={subCatagory}
+										onChange={handleChangeSubCatagory}
+										// autoWidth
+										label="Catagory"
+									>
+										{subCatagoryData ? (
+											subCatagoryData.subCatagories.map(
+												(iteam: any, index: any) => {
+													return (
+														<MenuItem key={index} value={iteam.name}>
+															<em>{iteam.name}</em>
+														</MenuItem>
+													);
+												}
+											)
+										) : (
+											<MenuItem value={undefined}>
+												<em>None</em>
+											</MenuItem>
+										)}
+									</Select>
+								</FormControl>
+							</div>
+						</Grid>
+						<Grid item xs={8} sm={8} md={2} style={{}}>
+							<Autocomplete
+								id="Search"
+								freeSolo
+								options={top100Films.map((option) => option.title)}
+								renderInput={(params) => (
+									<TextField {...params} label="Search" />
+								)}
+								sx={{ backgroundColor: "whitesmoke" }}
+							/>
+						</Grid>
+						<Grid item xs={8} sm={8} md={2} style={{}}>
+							<Button
+								variant="contained"
+								onClick={() => {
+									console.log("clicked");
+									openAddSubCatagoryDrawer();
+								}}
+								sx={{
+									padding: "10px",
+									color: "white",
+									backgroundColor: "black",
+									":hover": { backgroundColor: "#338610e8", color: "white" },
+									fontWeight: "600",
+									letterSpacing: 1,
+									fontSize: "14px",
+									// textTransform: "none",
+								}}
+							>
+								Add Sub-Catagory
+							</Button>
+						</Grid>
+						<Grid item xs={8} sm={8} md={2} style={{}}>
+							<Button
+								variant="contained"
+								onClick={() => {
+									console.log("clicked");
+									openAddCatagoryDrawer();
+									// openDrawer();
+								}}
+								sx={{
+									padding: "10px",
+									color: "white",
+									backgroundColor: "black",
+									":hover": { backgroundColor: "#3f9719", color: "white" },
+									fontWeight: "600",
+									letterSpacing: 1,
+									fontSize: "14px",
+									// textTransform: "none",
+								}}
+							>
+								Add Catagory
+							</Button>
+						</Grid>
 					</Grid>
-					<Grid item xs={8} sm={8} md={2} style={{}}>
-						<Autocomplete
-							id="Search"
-							freeSolo
-							options={top100Films.map((option) => option.title)}
-							renderInput={(params) => <TextField {...params} label="Search" />}
-							sx={{ backgroundColor: "whitesmoke" }}
-						/>
-					</Grid>
-					<Grid item xs={8} sm={8} md={2} style={{}}>
-						<Button
-							variant="contained"
-							onClick={() => {
-								console.log("clicked");
-								openAddSubCatagoryDrawer();
-							}}
-							sx={{
-								padding: "10px",
-								color: "white",
-								backgroundColor: "black",
-								":hover": { backgroundColor: "#51ca1de8", color: "white" },
-								fontWeight: "600",
-								letterSpacing: 1,
-								fontSize: "14px",
-								// textTransform: "none",
-							}}
-						>
-							Add Sub-Catagory
-						</Button>
-					</Grid>
-					<Grid item xs={8} sm={8} md={2} style={{}}>
-						<Button
-							variant="contained"
-							onClick={() => {
-								console.log("clicked");
-								openAddCatagoryDrawer();
-								// openDrawer();
-							}}
-							sx={{
-								padding: "10px",
-								color: "white",
-								backgroundColor: "black",
-								":hover": { backgroundColor: "#51ca1d", color: "white" },
-								fontWeight: "600",
-								letterSpacing: 1,
-								fontSize: "14px",
-								// textTransform: "none",
-							}}
-						>
-							Add Catagory
-						</Button>
-					</Grid>
-				</Grid>
+				</Paper>
 			</TopMenu>
 			<CatagoryWrapper>
-				<span>Catagory</span>
 				<div>
-					<Paper elevation={8} sx={{ width: "98%", overflow: "hidden" }}>
-						<TableContainer>
-							<Table
-								// sx={{ minWidth: 450, maxWidth: "80%" }}
-								aria-label="simple table"
-							>
+					<Paper elevation={8} sx={{ width: '100%', maxWidth: 1050, overflow: 'hidden' }}>
+						<TableContainer sx={{ maxHeight: 400 }}>
+							<Table stickyHeader>
 								<TableHead>
 									<TableRow>
-										<TableCell width={300} align="center">
-											id
+										<TableCell align="center" colSpan={6}>
+											Catagory
+										</TableCell>
+									</TableRow>
+								</TableHead>
+								<TableHead>
+									<TableRow>
+										<TableCell width={150} align="center">
+											Image
 										</TableCell>
 										<TableCell width={200} align="center">
 											Name
@@ -209,8 +221,11 @@ export const Catagories: React.FC<props> = () => {
 										<TableCell width={200} align="center">
 											Slug
 										</TableCell>
-										<TableCell width={200} align="center">
+										<TableCell width={120} align="center">
 											Status
+										</TableCell>
+										<TableCell width={250} align="center">
+											Seo Tags
 										</TableCell>
 										<TableCell width={100} align="center">
 											Edit
@@ -220,31 +235,80 @@ export const Catagories: React.FC<props> = () => {
 								<TableBody>
 									{CatagoryData
 										? CatagoryData.categories.map((iteam: any, index: any) => {
-												return (
-													<TableRow key={index}>
-														<TableCell align="center">{iteam.id}</TableCell>
-														<TableCell align="center">{iteam.name}</TableCell>
-														<TableCell align="center">{iteam.slug}</TableCell>
-														<TableCell align={"center"}>
-															<IconButton>
-																<Button
-																	sx={{
-																		backgroundColor: "black",
+											return (
+												<TableRow key={index}>
+													<TableCell align="center">
+														{iteam.image[0] ? <Image width={150} height={100} src={iteam.image[0]} alt={`${iteam.name} image `} /> : null}
+
+													</TableCell>
+													<TableCell align="center">{iteam.name}</TableCell>
+													<TableCell align="center">{iteam.slug}</TableCell>
+													<TableCell align="center">
+														{iteam.status ? (
+															<Button
+																sx={{
+																	backgroundColor: "#438a2d",
+																	color: "black",
+																	":hover": {
+																		backgroundColor: "#438a2d",
+																		color: "black",
+																		cursor: "default",
+																	},
+																}}
+															>
+																{JSON.stringify(iteam.status)}
+															</Button>
+														) : (
+															<Button
+																sx={{
+																	backgroundColor: "#e23f3f",
+																	color: "white",
+																	":hover": {
+																		backgroundColor: "#e23f3f",
 																		color: "white",
-																		display: "flex",
-																		":hover": { backgroundColor: "green" },
-																	}}
-																	onClick={() => {
-																		openEditCatagoryDrawer(iteam);
-																	}}
-																>
-																	Edit
-																</Button>
-															</IconButton>
-														</TableCell>
-													</TableRow>
-												);
-										  })
+																		cursor: "default",
+																	},
+																}}
+															>
+																{JSON.stringify(iteam.status)}
+															</Button>
+														)}
+													</TableCell>
+													<TableCell align="center">
+														{/* {iteam.tags.map(
+															(chipIteam: any, index: number) => {
+																return (
+																	<Chip
+																		sx={{ maxWidth: "6vw" }}
+																		label={chipIteam}
+																		variant="outlined"
+																		key={index}
+																	/>
+																);
+															}
+														)} */}
+														<span>
+															{`[${iteam.tags}]`}
+														</span>
+													</TableCell>
+													<TableCell align={"center"}>
+														<Button
+															sx={{
+																backgroundColor: "black",
+																color: "white",
+																display: "flex",
+																":hover": { backgroundColor: "green" },
+															}}
+															onClick={() => {
+																openEditCatagoryDrawer(iteam);
+															}}
+														>
+															Edit
+														</Button>
+													</TableCell>
+												</TableRow>
+											);
+										})
 										: ""}
 								</TableBody>
 							</Table>
@@ -253,30 +317,38 @@ export const Catagories: React.FC<props> = () => {
 				</div>
 			</CatagoryWrapper>
 			<SubCatagoryWrapper>
-				<span>Sub Catagory</span>
-				{subCatagoryData ? console.log(subCatagoryData) : null}
 				<div>
-					<Paper elevation={8} sx={{ width: "98%", overflow: "hidden" }}>
-						<TableContainer>
-							<Table
-								// sx={{ minWidth: 450, maxWidth: "80%" }}
-								aria-label="simple table"
-							>
+					<Paper elevation={8} sx={{ width: '100%', maxWidth: 1050, overflow: 'hidden' }}>
+						<TableContainer sx={{ maxHeight: 400 }}>
+							<Table stickyHeader>
 								<TableHead>
 									<TableRow>
-										<TableCell width={300} align="center">
-											id
+										<TableCell align="center" colSpan={7}>
+											Sub Catagory
 										</TableCell>
-										<TableCell width={200} align="center">
+									</TableRow>
+								</TableHead>
+								<TableHead>
+									<TableRow>
+										<TableCell width={150} align="center">
+											Image
+										</TableCell>
+										<TableCell width={150} align="center">
 											Name
 										</TableCell>
-										<TableCell width={200} align="center">
+										<TableCell width={150} align="center">
 											Slug
 										</TableCell>
 										<TableCell width={200} align="center">
-											Status
+											Catagory
 										</TableCell>
 										<TableCell width={100} align="center">
+											Status
+										</TableCell>
+										<TableCell width={250} align="center">
+											Seo Tags
+										</TableCell>
+										<TableCell width={50} align="center">
 											Edit
 										</TableCell>
 									</TableRow>
@@ -284,38 +356,92 @@ export const Catagories: React.FC<props> = () => {
 								<TableBody>
 									{subCatagoryData
 										? subCatagoryData.subCatagories.map(
-												(iteam: any, index: any) => {
-													return (
-														<TableRow key={index}>
-															<TableCell align="center">{iteam.id}</TableCell>
-															<TableCell align="center">{iteam.name}</TableCell>
-															<TableCell align="center">{iteam.slug}</TableCell>
-															<TableCell align={"center"}>
-																<IconButton>
-																	<Button
-																		sx={{
-																			backgroundColor: "black",
+											(iteam: any, index: any) => {
+												return (
+													<TableRow key={index}>
+														<TableCell align="center">
+															{iteam.image[0] ? <Image width={150} height={100} src={iteam.image[0]} alt={`${iteam.name} image `} /> : null}
+														</TableCell>
+														<TableCell align="center">{iteam.name}</TableCell>
+														<TableCell align="center">{iteam.slug}</TableCell>
+														<TableCell align="center">
+															{iteam.category.name}
+														</TableCell>
+														<TableCell align="center">
+															{iteam.status ? (
+																<Button
+																	sx={{
+																		backgroundColor: "#438a2d",
+																		color: "black",
+																		":hover": {
+																			backgroundColor: "#438a2d",
+																			color: "black",
+																			cursor: "default",
+																		},
+																	}}
+																>
+																	{JSON.stringify(iteam.status)}
+																</Button>
+															) : (
+																<Button
+																	sx={{
+																		backgroundColor: "#e23f3f",
+																		color: "white",
+																		":hover": {
+																			backgroundColor: "#e23f3f",
 																			color: "white",
-																			display: "flex",
-																			":hover": { backgroundColor: "green" },
-																		}}
-																	>
-																		Edit
-																	</Button>
-																</IconButton>
-															</TableCell>
-														</TableRow>
-													);
-												}
-										  )
-										: ""}
+																			cursor: "default",
+																		},
+																	}}
+																>
+																	{JSON.stringify(iteam.status)}
+																</Button>
+															)}
+														</TableCell>
+														<TableCell align="center">
+															{/* {iteam.tags.map(
+																(chipIteam: any, index: number) => {
+																	return (
+																		<Chip
+																			sx={{ maxWidth: "6vw" }}
+																			label={chipIteam}
+																			variant="outlined"
+																			key={index}
+																		/>
+																	);
+																}
+															)} */}
+															<span>
+																{`[ ${iteam.tags} ]`}
+															</span>
+														</TableCell>
+														<TableCell align={"center"}>
+															<Button
+																sx={{
+																	backgroundColor: "black",
+																	color: "white",
+																	display: "flex",
+																	":hover": { backgroundColor: "green" },
+																}}
+																onClick={() => {
+																	openEditSubCatagoryDrawer(iteam);
+																}}
+															>
+																Edit
+															</Button>
+														</TableCell>
+													</TableRow>
+												);
+											}
+										)
+										: null}
 								</TableBody>
 							</Table>
 						</TableContainer>
 					</Paper>
 				</div>
 			</SubCatagoryWrapper>
-		</MainDiv>
+		</MainDiv >
 	);
 };
 
