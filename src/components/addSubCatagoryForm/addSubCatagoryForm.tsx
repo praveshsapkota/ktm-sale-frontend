@@ -22,7 +22,10 @@ import {
 	FormTitle,
 } from "./addSubCatagory.styles";
 import { usedrawerStore } from "../../store/drawerStore";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
+import { addSubCatagory } from "../../graphql/Mutation/SubCatagory/addSubCatagory"
+import { UpdateSubCatagoryWithImage, UpdateSubCatagoryWithoutImage } from "../../graphql/Mutation/SubCatagory/updateSubCatagory"
+import { UploadImage } from "../../graphql/Mutation/imageUpload"
 import { Catagory } from "../../graphql/Query/catagory";
 
 interface props {
@@ -36,13 +39,9 @@ type FormValues = {
 	category: string;
 	image: any[];
 	tags: string[];
-	status: boolean;
+	status: string;
 };
 
-//formSubmitHandler
-const onSubmit: SubmitHandler<FormValues> = async (value: any) => {
-	console.log(value);
-};
 
 export const AddSubCatagoryForm: React.FC<props> = ({ data }) => {
 	console.log(data);
@@ -54,6 +53,9 @@ export const AddSubCatagoryForm: React.FC<props> = ({ data }) => {
 			reValidateMode: "onChange",
 		}
 	);
+	//for the button click identification either its add or update
+	const [ButtonState, SetButtonState] = React.useState("");
+
 	const value = watch();
 	React.useEffect(() => {
 		console.log(value);
@@ -74,15 +76,134 @@ export const AddSubCatagoryForm: React.FC<props> = ({ data }) => {
 
 	//Drawer control
 	const usecloseDrawer = usedrawerStore((state) => state.toggleState);
-	const closeDrawer = (event: { preventDefault: () => void }) => {
-		event.preventDefault();
+	const closeDrawer = () => {
 		usecloseDrawer("CLOSE_DRAWER", null, null);
 	};
+
+	//mutation to add Sub-catagory initialized here
+	const [
+		addSubCatagoryMutation,
+		{ data: subCatagoryData, error: subCatagoryError, loading: subCatagoryLoading },
+	] = useMutation(addSubCatagory);
+
+	//mutation for update Sub-catagory with changed image initilized here
+	const [
+		Update_SubCatagoryWithImage,
+		{ data: subCatagoryUpdateData,
+			error: subCatagoryUpdateError,
+			loading: subCatagoryUpdateLoading,
+		},
+	] = useMutation(UpdateSubCatagoryWithImage);
+
+	//mutation for update Sub-catagory without changed image initilized here
+	const [
+		Update_SubCatagoryWithoutImage,
+		{
+			data: subCatagoryUpdateWithourImageData,
+			error: subCatagoryUpdateWithourImageError,
+			loading: subCatagoryUpdateWithourImageLoading,
+		},
+	] = useMutation(UpdateSubCatagoryWithoutImage);
+	//mutation to add Images initialized here
+	const [
+		addImages,
+		{
+			data: ImagesLocationData,
+			error: ImageUploadError,
+			loading: ImageUploadLoading,
+		},
+	] = useMutation(UploadImage);
+
+
+	//formSubmitHandler
+	const onSubmit: SubmitHandler<FormValues> = async (value: any) => {
+		console.log("submitted");
+		console.log(value);
+		const StatusValue = () => {
+			return new Promise((resolve) => {
+				value.status === "false" ? resolve(false) : resolve(true);
+			});
+		};
+		console.log("statusValue", await StatusValue());
+		ButtonState == "Add"
+			?
+			addImages({
+				variables: {
+					files: value.image,
+				},
+			}).then(
+				async (res) => {
+					console.log(res.data.S3ImageUpload);
+					addSubCatagoryMutation({
+						variables: {
+							name: value.name,
+							slug: value.slug,
+							status: value.status,
+							catagory: value.category,
+							subCatagoryImage: res.data.S3ImageUpload,
+							seoTags: value.tags,
+						},
+					}).then((res) => {
+						console.log(res);
+						closeDrawer();
+					});
+				},
+				(err) => console.log(err)
+			)
+			:
+			typeof value.image[0] == "object"
+				?
+				addImages({
+					variables: {
+						files: value.image,
+					},
+				}).then(
+					async (res) => {
+						console.log(res.data.S3ImageUpload);
+						Update_SubCatagoryWithImage({
+							variables: {
+								subCatagoryImage: { set: res.data.S3ImageUpload },
+								name: data.name,
+								newName: { set: value.name },
+								seoTags: { set: value.tags },
+								slug: { set: value.slug },
+								catagory: (value.category.name ? value.category.name : value.category),
+								status: { set: value.status },
+								// subCatagoryImage: res.data.S3ImageUpload,
+								// name: data.name,
+								// newName: value.name,
+								// seoTags: value.tags,
+								// slug: value.slug,
+								// catagory: value.category,
+								// status: value.status,
+							},
+						}).then((res) => {
+							console.log(res);
+							closeDrawer();
+						});
+					},
+					(err) => console.log(err)
+				)
+				:
+				Update_SubCatagoryWithoutImage({
+					variables: {
+						name: data.name,
+						newName: { set: value.name },
+						seoTags: { set: value.tags },
+						slug: { set: value.slug },
+						catagory: (value.category.name ? value.category.name : value.category),
+						status: { set: value.status },
+					},
+				}).then((res) => {
+					console.log(res);
+					closeDrawer();
+				});
+	};
+
 
 	return (
 		<>
 			<AddSubCatagoryForm_Wrapper>
-				{/* {catagoryData} */}
 				<TopDiv>
 					{data ? (
 						<FormTitle>Update Sub Catagory</FormTitle>
@@ -235,7 +356,9 @@ export const AddSubCatagoryForm: React.FC<props> = ({ data }) => {
 															id="demo-simple-select-autowidth"
 															label="Sub catagory"
 															onChange={onChange}
-															value={value.name || ""}
+															defaultValue={value ? value.name : ""}
+														// value={value.name}
+														// value={value.name || ""}
 														>
 															{CatagoryData ? (
 																CatagoryData.categories.map(
@@ -291,7 +414,7 @@ export const AddSubCatagoryForm: React.FC<props> = ({ data }) => {
 															id="demo-simple-select-autowidth"
 															label="Sub catagory"
 															onChange={onChange}
-															value={JSON.stringify(value) || ""}
+															value={value || ""}
 														>
 															<MenuItem value={"true"}>true</MenuItem>
 															<MenuItem value={"false"}>false</MenuItem>
@@ -317,6 +440,7 @@ export const AddSubCatagoryForm: React.FC<props> = ({ data }) => {
 
 						{data == null ? (
 							<Button
+								onClick={() => SetButtonState("Add")}
 								variant="contained"
 								type="submit"
 								size="medium"
@@ -325,12 +449,12 @@ export const AddSubCatagoryForm: React.FC<props> = ({ data }) => {
 									backgroundColor: "green",
 									fontWeight: "600",
 								}}
-								// onClick={closeDrawer}
 							>
 								Add Sub Catagory
 							</Button>
 						) : (
 							<Button
+								onClick={() => SetButtonState("Update")}
 								variant="contained"
 								type="submit"
 								size="medium"
@@ -339,7 +463,7 @@ export const AddSubCatagoryForm: React.FC<props> = ({ data }) => {
 									backgroundColor: "green",
 									fontWeight: "600",
 								}}
-								// onClick={closeDrawer}
+							// onClick={closeDrawer}
 							>
 								Update Sub Catagory
 							</Button>

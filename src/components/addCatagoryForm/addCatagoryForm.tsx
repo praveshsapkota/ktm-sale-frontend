@@ -18,9 +18,15 @@ import {
 	TopDiv,
 	ImageUploadWrapper,
 	BottomWrapper,
-	FormFielsWrapper,
 	FormTitle,
 } from "./addCatagoryForm.styles";
+import { useMutation } from "@apollo/client";
+import { addCatagory } from "../../graphql/Mutation/Catagory/addCatagory";
+import {
+	UpdateCatagoryWithImage,
+	UpdateCatagoryWithoutImage,
+} from "../../graphql/Mutation/Catagory/updateCatagory";
+import { UploadImage } from "../../graphql/Mutation/imageUpload";
 import { usedrawerStore } from "../../store/drawerStore";
 
 interface props {
@@ -31,16 +37,12 @@ type FormValues = {
 	name: string;
 	slug: string;
 	image: any[];
-	tags: any[];
-	status: boolean;
-};
-//formSubmitHandler
-const onSubmit: SubmitHandler<FormValues> = async (value: any) => {
-	console.log(value);
+	tags: any;
+	status: string;
 };
 
 export const AddCatagoryForm: React.FC<props> = ({ data }) => {
-	console.log(data);
+	console.log("www", data);
 	const { control, reset, watch, handleSubmit, setValue } = useForm<FormValues>(
 		{
 			defaultValues: data,
@@ -49,8 +51,14 @@ export const AddCatagoryForm: React.FC<props> = ({ data }) => {
 			reValidateMode: "onChange",
 		}
 	);
+
+	//for the button click identification either its add or update
+	const [ButtonState, SetButtonState] = React.useState("");
+
 	const value = watch();
 	React.useEffect(() => {
+		// if(typevalue[0] == )
+		// if (typeof value.image[0] == "object") console.log("true its object")
 		console.log(value);
 	}, [value]);
 	//image upload handler from react DropZone
@@ -59,17 +67,138 @@ export const AddCatagoryForm: React.FC<props> = ({ data }) => {
 		console.log(files);
 	};
 
+	//mutation to add product initialized here
+	const [
+		addCatagoryMutation,
+		{ data: catagoryData, error: catagoryError, loading: catagoryLoading },
+	] = useMutation(addCatagory);
+
+	//mutation for update catagory with changed image initilized here
+	const [
+		UpdateCatagoryMutation,
+		{
+			data: catagoryUpdateData,
+			error: catagoryUpdateError,
+			loading: catagoryUpdateLoading,
+		},
+	] = useMutation(UpdateCatagoryWithImage);
+
+	//mutation for update catagory without changed image initilized here
+	const [
+		UpdateCatagoryWithourImageMutation,
+		{
+			data: catagoryUpdateWithourImageData,
+			error: catagoryUpdateWithourImageError,
+			loading: catagoryUpdateWithourImageLoading,
+		},
+	] = useMutation(UpdateCatagoryWithoutImage);
+	//mutation to add Images initialized here
+	const [
+		addImages,
+		{
+			data: ImagesLocationData,
+			error: ImageUploadError,
+			loading: ImageUploadLoading,
+		},
+	] = useMutation(UploadImage);
+
 	//Drawer control
 	const usecloseDrawer = usedrawerStore((state) => state.toggleState);
-	const closeDrawer = (event: { preventDefault: () => void }) => {
-		event.preventDefault();
+	const closeDrawer = (event?: { preventDefault: () => void }) => {
+		console.log("inside close Drawer");
+		// event.preventDefault();
 		usecloseDrawer("CLOSE_DRAWER", null, null);
 	};
 
+	//formSubmitHandler
+	const onSubmit: SubmitHandler<FormValues> = async (value: any) => {
+		console.log("submitted");
+		console.log(value);
+		const StatusValue = () => {
+			return new Promise((resolve) => {
+				value.status === "false" ? resolve(false) : resolve(true);
+			});
+		};
+		console.log("statusValue", await StatusValue());
+		ButtonState == "Add"
+			?
+			addImages({
+				variables: {
+					files: value.image,
+				},
+			}).then(
+				async (res) => {
+					console.log(res.data.S3ImageUpload);
+					addCatagoryMutation({
+						variables: {
+							name: value.name,
+							slug: value.slug,
+							status: value.status,
+							catagoryImage: res.data.S3ImageUpload,
+							seoTags: value.tags,
+						},
+					}).then((res) => {
+						console.log(res);
+						closeDrawer();
+					});
+				},
+				(err) => console.log(err)
+			)
+			:
+			typeof value.image[0] == "object"
+				?
+				addImages({
+					variables: {
+						files: value.image,
+					},
+				}).then(
+					async (res) => {
+						console.log(res.data.S3ImageUpload);
+						UpdateCatagoryMutation({
+							variables: {
+								catagoryImage: { set: res.data.S3ImageUpload },
+								name: data.name,
+								newName: { set: value.name },
+								seoTags: { set: value.tags },
+								slug: { set: value.slug },
+								status: { set: value.status },
+								// name: data.name,
+								// newName : value.name,
+								// slug: value.slug,
+								// status: await StatusValue(),
+								// catagoryImage: res.data.S3ImageUpload,
+								// seoTags: value.tags,
+							},
+						}).then((res) => {
+							console.log(res);
+							closeDrawer();
+						});
+					},
+					(err) => console.log(err)
+				)
+				:
+				UpdateCatagoryWithourImageMutation({
+					variables: {
+						name: data.name,
+						newName: { set: value.name },
+						seoTags: { set: value.tags },
+						slug: { set: value.slug },
+						status: { set: value.status },
+						// name: data.name,
+						// newName : value.name,
+						// slug: value.slug,
+						// status: await StatusValue(),
+						// catagoryImage: res.data.S3ImageUpload,
+						// seoTags: value.tags,
+					},
+				}).then((res) => {
+					console.log(res);
+					closeDrawer();
+				});
+	};
 	return (
 		<>
 			<AddCatagoryForm_Wrapper>
-				{/* {catagoryData} */}
 				<TopDiv>
 					{data ? (
 						<FormTitle>Update Catagory</FormTitle>
@@ -236,7 +365,8 @@ export const AddCatagoryForm: React.FC<props> = ({ data }) => {
 															id="demo-simple-select-autowidth"
 															label="Sub catagory"
 															onChange={onChange}
-															value={value || ""}
+															// value={value || ""}
+															defaultValue={value || ""}
 														>
 															<MenuItem value={"true"}>true</MenuItem>
 															<MenuItem value={"false"}>false</MenuItem>
@@ -259,23 +389,23 @@ export const AddCatagoryForm: React.FC<props> = ({ data }) => {
 						>
 							Cancle
 						</Button>
-
 						{data == null ? (
 							<Button
-								variant="contained"
+								onClick={() => SetButtonState("Add")}
 								type="submit"
+								variant="contained"
 								size="medium"
 								sx={{
 									width: "30vw",
 									backgroundColor: "green",
 									fontWeight: "600",
 								}}
-								// onClick={closeDrawer}
 							>
 								Add Catagory
 							</Button>
 						) : (
 							<Button
+								onClick={() => SetButtonState("Update")}
 								variant="contained"
 								type="submit"
 								size="medium"
@@ -284,7 +414,6 @@ export const AddCatagoryForm: React.FC<props> = ({ data }) => {
 									backgroundColor: "green",
 									fontWeight: "600",
 								}}
-								// onClick={closeDrawer}
 							>
 								Update Catagory
 							</Button>
