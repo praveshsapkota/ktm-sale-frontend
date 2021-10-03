@@ -2,9 +2,9 @@ import styled from "styled-components";
 
 export const MainDiv = styled.div`
 	background-color: whitesmoke;
-	overflow: auto;
 	/* padding: 2px; */
 	width: 85vw;
+	overflow-x: hidden;
 	display: flex;
 	flex-direction: column;
 	/* align-items: center; */
@@ -36,9 +36,10 @@ export const ImageUploadWrapper = styled.div`
 `;
 
 export const FormFielsWrapper = styled.div`
-	width: 100%;
+	width: 98%;
 	display: flex;
-	align-items: center;
+	flex-direction: column;
+	/* align-items: center; */
 	justify-content: space-between;
 `;
 
