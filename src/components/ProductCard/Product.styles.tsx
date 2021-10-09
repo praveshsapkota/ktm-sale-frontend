@@ -8,7 +8,6 @@ export const ProductImageWrapper = styled.div`
 	display: "flex";
 	align-items: "center";
 	justify-content: "center";
-
 	@media only screen and (max-width: 767px) {
 		height: "165px";
 	}

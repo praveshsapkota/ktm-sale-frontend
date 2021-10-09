@@ -7,9 +7,9 @@ interface props {}
 
 export const Drawer: React.FC<props> = () => {
 	const [open, setOpen] = useState(false);
-	// const toggleDrawer = ()=>{
-
-	// }
+	const closeDrawer = () => {
+		setOpen(false);
+	};
 
 	return (
 		<Menu>
@@ -36,8 +36,10 @@ export const Drawer: React.FC<props> = () => {
 					setOpen(true);
 				}}
 				disableDiscovery={true}
+				// disableSwipeToOpen={true}
+				transitionDuration={300}
 			>
-				<SidebarContent />
+				<SidebarContent DrawerToggle={closeDrawer} />
 			</SwipeableDrawer>
 		</Menu>
 	);

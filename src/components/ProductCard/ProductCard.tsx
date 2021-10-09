@@ -5,60 +5,29 @@ import {
 	NameWrapper,
 	PriceWrapper,
 } from "./Product.styles";
-
+import { useDrawerDispatch, useDrawerState } from "../../context/DrawerContext";
+import Image from "next/image";
+import { usedrawerStore } from "../../store/drawerStore";
 interface props {
-	title: string;
-	image: any;
-	weight?: string;
-	currency?: string;
-	description?: string;
-	price: number;
-	salePrice?: number;
-	orderId?: number;
-	discountInPercent?: number;
-	data: [any];
-	form: () => void;
+	data: any;
+	// onclose: () => void;
 }
-import { AddProductFrom } from "../AddProductForm/AddProductForm";
 
-const Product = [
-	{
-		name: "jorden10",
-		price: 100,
-		discount: "20%",
-		description:
-			"fbshfshdkjksdj dkjhksdjhfksdkf dkjfksjdhf fjdskf kdjsfkjds dskfnskjdf sdfjsdfk skdjfhs",
-		img: "https://ktmsale.s3.ap-south-1.amazonaws.com/wallpaperflare.com_wallpaper.jpg",
-		quantity: "1pc(s)",
-	},
-];
+export const ProductCard: React.FC<props> = ({ data }) => {
+	console.log(data);
+	const DrawerState = usedrawerStore((state) => state.drawerState);
+	const useopenDrawer = usedrawerStore((state) => state.toggleState);
+	const openDrawer = () => {
+		useopenDrawer("OPEN_DRAWER", "UPDATE_PRODUCT_FORM", data);
+	};
 
-export const ProductCard: React.FC<props> = ({
-	title,
-	image,
-	weight,
-	price,
-	salePrice,
-	discountInPercent,
-	description,
-	currency,
-	data,
-	orderId,
-
-	...props
-}) => {
-	const [titlestate, setTitle] = React.useState(title);
-	const [imagestate, setImage] = React.useState(image);
-	const [weightstate, setWeight] = React.useState(weight);
-	const [pricestate, setPrice] = React.useState(price);
-	const [discountPercentstate, setDiscountPercent] =
-		React.useState(discountInPercent);
-	const [salePricestate, setSalePrice] = React.useState(salePrice);
-	const [descriptionstate, setDescription] = React.useState(description);
-	const [imageGallerystate, setImageGallery] = React.useState(data);
-	let addForm;
 	return (
-		<div onClick={() => {}}>
+		<div
+			onClick={async () => {
+				console.log("touched card");
+				openDrawer();
+			}}
+		>
 			<Box
 				sx={{
 					display: "flex",
@@ -66,6 +35,7 @@ export const ProductCard: React.FC<props> = ({
 					"& > :not(style)": {
 						m: 1,
 						width: 300,
+						// backgroundColor: "black",
 						// height: 200,
 						display: "flex",
 						flexDirection: "column",
@@ -76,21 +46,24 @@ export const ProductCard: React.FC<props> = ({
 			>
 				<Paper elevation={5} sx={{ ":hover": {} }}>
 					{/* <ProductImageWrapper> */}
-					<img
-						src={Product[0].img}
-						alt={Product[0].name}
-						style={{
-							maxWidth: "100%",
-							maxHeight: "100%",
-							display: "inline-block",
-						}}
+					<Image
+						src={data.image ? data.image : null}
+						alt={data.name}
+						width={100}
+						height={100}
+					// layout="responsive"
+					// sizes = {}
+					// style={{
+					// 	maxWidth: "100%",
+					// 	maxHeight: "100%",
+					// 	display: "inline-block",
+					// }}
 					/>
 					{/* </ProductImageWrapper> */}
-					<NameWrapper>{Product[0].name}</NameWrapper>
-					<PriceWrapper>RS.{Product[0].price}</PriceWrapper>
+					<NameWrapper>{data.name}</NameWrapper>
+					<PriceWrapper>RS.{data.price}</PriceWrapper>
 				</Paper>
 			</Box>
-			{addForm}
 		</div>
 	);
 };

@@ -8,6 +8,7 @@ import {
 	SubCatagoryWrapper,
 	TopMenu,
 	MainDiv,
+	EditButton,
 	StatusFalse,
 	StatusTrue,
 } from "../styles/catagory.styles";
@@ -31,7 +32,6 @@ import {
 	IconButton,
 } from "@material-ui/core";
 import { usedrawerStore } from "../store/drawerStore";
-import { Height } from "@material-ui/icons";
 interface props { }
 
 export const Catagories: React.FC<props> = () => {
@@ -163,6 +163,7 @@ export const Catagories: React.FC<props> = () => {
 									padding: "10px",
 									color: "white",
 									backgroundColor: "black",
+									boxShadow: "5px 5px 18px #726262, -5px -5px 18px #ffffff",
 									":hover": { backgroundColor: "#338610e8", color: "white" },
 									fontWeight: "600",
 									letterSpacing: 1,
@@ -185,6 +186,7 @@ export const Catagories: React.FC<props> = () => {
 									padding: "10px",
 									color: "white",
 									backgroundColor: "black",
+									boxShadow: "5px 5px 18px #726262, -5px -5px 18px #ffffff",
 									":hover": { backgroundColor: "#3f9719", color: "white" },
 									fontWeight: "600",
 									letterSpacing: 1,
@@ -205,7 +207,7 @@ export const Catagories: React.FC<props> = () => {
 							<Table stickyHeader>
 								<TableHead>
 									<TableRow>
-										<TableCell align="center" colSpan={6}>
+										<TableCell align="center" colSpan={6} sx={{ backgroundColor: "steelblue", color: "white", fontSize: "30px", letterSpacing: "1px", fontWeight: "600", fontFamily: "monospace" }}>
 											Catagory
 										</TableCell>
 									</TableRow>
@@ -221,11 +223,8 @@ export const Catagories: React.FC<props> = () => {
 										<TableCell width={200} align="center">
 											Slug
 										</TableCell>
-										<TableCell width={120} align="center">
+										<TableCell width={150} align="center">
 											Status
-										</TableCell>
-										<TableCell width={250} align="center">
-											Seo Tags
 										</TableCell>
 										<TableCell width={100} align="center">
 											Edit
@@ -239,30 +238,31 @@ export const Catagories: React.FC<props> = () => {
 												<TableRow key={index}>
 													<TableCell align="center">
 														{iteam.image[0] ? <Image width={150} height={100} src={iteam.image[0]} alt={`${iteam.name} image `} /> : null}
-
 													</TableCell>
 													<TableCell align="center">{iteam.name}</TableCell>
 													<TableCell align="center">{iteam.slug}</TableCell>
 													<TableCell align="center">
-														{iteam.status ? (
+														{iteam.status == "true" ? (
 															<Button
 																sx={{
 																	backgroundColor: "#438a2d",
-																	color: "black",
+																	color: "white",
+																	boxShadow: "5px 5px 18px #726262, -5px -5px 18px #ffffff",
 																	":hover": {
 																		backgroundColor: "#438a2d",
-																		color: "black",
+																		color: "white",
 																		cursor: "default",
 																	},
 																}}
 															>
-																{JSON.stringify(iteam.status)}
+																{iteam.status}
 															</Button>
 														) : (
 															<Button
 																sx={{
 																	backgroundColor: "#e23f3f",
 																	color: "white",
+																	boxShadow: "5px 5px 18px #726262, -5px -5px 18px #ffffff",
 																	":hover": {
 																		backgroundColor: "#e23f3f",
 																		color: "white",
@@ -270,34 +270,17 @@ export const Catagories: React.FC<props> = () => {
 																	},
 																}}
 															>
-																{JSON.stringify(iteam.status)}
+																{iteam.status}
 															</Button>
 														)}
 													</TableCell>
-													<TableCell align="center">
-														{/* {iteam.tags.map(
-															(chipIteam: any, index: number) => {
-																return (
-																	<Chip
-																		sx={{ maxWidth: "6vw" }}
-																		label={chipIteam}
-																		variant="outlined"
-																		key={index}
-																	/>
-																);
-															}
-														)} */}
-														<span>
-															{`[${iteam.tags}]`}
-														</span>
-													</TableCell>
+
 													<TableCell align={"center"}>
 														<Button
 															sx={{
-																backgroundColor: "black",
-																color: "white",
+																color: "black",
 																display: "flex",
-																":hover": { backgroundColor: "green" },
+																boxShadow: "5px 5px 15px #747474, -8px -8px 15px #ffffff"
 															}}
 															onClick={() => {
 																openEditCatagoryDrawer(iteam);
@@ -323,7 +306,7 @@ export const Catagories: React.FC<props> = () => {
 							<Table stickyHeader>
 								<TableHead>
 									<TableRow>
-										<TableCell align="center" colSpan={7}>
+										<TableCell align="center" colSpan={6} sx={{ backgroundColor: "#bb0e0ed5", color: "white", fontSize: "28px", letterSpacing: "1px", fontWeight: "600", fontFamily: "monospace" }}>
 											Sub Catagory
 										</TableCell>
 									</TableRow>
@@ -345,10 +328,7 @@ export const Catagories: React.FC<props> = () => {
 										<TableCell width={100} align="center">
 											Status
 										</TableCell>
-										<TableCell width={250} align="center">
-											Seo Tags
-										</TableCell>
-										<TableCell width={50} align="center">
+										<TableCell width={100} align="center">
 											Edit
 										</TableCell>
 									</TableRow>
@@ -368,25 +348,27 @@ export const Catagories: React.FC<props> = () => {
 															{iteam.category.name}
 														</TableCell>
 														<TableCell align="center">
-															{iteam.status ? (
+															{iteam.status == "true" ? (
 																<Button
 																	sx={{
 																		backgroundColor: "#438a2d",
-																		color: "black",
+																		color: "white",
+																		boxShadow: "5px 5px 15px #555050, -8px -8px 15px #ffffff",
 																		":hover": {
 																			backgroundColor: "#438a2d",
-																			color: "black",
+																			color: "white",
 																			cursor: "default",
 																		},
 																	}}
 																>
-																	{JSON.stringify(iteam.status)}
+																	{iteam.status}
 																</Button>
 															) : (
 																<Button
 																	sx={{
 																		backgroundColor: "#e23f3f",
 																		color: "white",
+																		boxShadow: "5px 5px 15px #555050, -8px -8px 15px #ffffff",
 																		":hover": {
 																			backgroundColor: "#e23f3f",
 																			color: "white",
@@ -394,34 +376,20 @@ export const Catagories: React.FC<props> = () => {
 																		},
 																	}}
 																>
-																	{JSON.stringify(iteam.status)}
+																	{iteam.status}
 																</Button>
 															)}
 														</TableCell>
-														<TableCell align="center">
-															{/* {iteam.tags.map(
-																(chipIteam: any, index: number) => {
-																	return (
-																		<Chip
-																			sx={{ maxWidth: "6vw" }}
-																			label={chipIteam}
-																			variant="outlined"
-																			key={index}
-																		/>
-																	);
-																}
-															)} */}
-															<span>
-																{`[ ${iteam.tags} ]`}
-															</span>
-														</TableCell>
+
 														<TableCell align={"center"}>
 															<Button
 																sx={{
-																	backgroundColor: "black",
-																	color: "white",
+
+																	// backgroundColor: "white",
+																	color: "black",
 																	display: "flex",
-																	":hover": { backgroundColor: "green" },
+																	boxShadow: "5px 5px 15px #747474, -8px -8px 15px #ffffff"
+
 																}}
 																onClick={() => {
 																	openEditSubCatagoryDrawer(iteam);

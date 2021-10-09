@@ -14,6 +14,7 @@ export const SubCatagoryWrapper = styled.div`
 	flex-direction: column;
 	align-items: center;
 `;
+
 export const TopMenu = styled.div`
 	/* overflow-y: auto; */
 	display: flex;

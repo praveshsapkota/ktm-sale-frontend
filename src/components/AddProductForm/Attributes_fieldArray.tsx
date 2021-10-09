@@ -65,7 +65,7 @@ const AttributeModal: React.FC<props> = ({
 	const indexx = 1;
 	const { fields, append, remove } = useFieldArray({
 		control: control,
-		name: `variant[${VariantIndex}].attributes` as "variant.0.attributes",
+		name: `variants[${VariantIndex}].attributes` as "variants.0.attributes",
 	});
 	// console.log("Modal no" + VariantIndex);
 	return (
@@ -159,7 +159,7 @@ const AttributeModal: React.FC<props> = ({
 															padding: "10px ",
 														}}
 														{...register(
-															`variant[${VariantIndex}].attributes[${index}].attrName`,
+															`variants[${VariantIndex}].attributes[${index}].attrName`,
 															{
 																require: true,
 															}
@@ -175,7 +175,7 @@ const AttributeModal: React.FC<props> = ({
 															padding: "10px ",
 														}}
 														{...register(
-															`variant[${VariantIndex}].attributes[${index}].attrValue`,
+															`variants[${VariantIndex}].attributes[${index}].attrValue`,
 															{
 																require: true,
 															}
@@ -193,12 +193,12 @@ const AttributeModal: React.FC<props> = ({
 															);
 															console.log(
 																"non ",
-																getValues(`variant[${VariantIndex}].attributes`)
+																getValues(`variants[${VariantIndex}].attributes`)
 															);
 															console.log(
 																"filtered",
 																getValues(
-																	`variant[${VariantIndex}].attributes`
+																	`variants[${VariantIndex}].attributes`
 																).filter((iteam: any, Arrindex: any) => {
 																	return Arrindex != index;
 																})
@@ -256,10 +256,10 @@ const AttributeModal: React.FC<props> = ({
 									":hover": { backgroundColor: "green" },
 								}}
 								onClick={() => {
-									console.log("non ", getValues().variant);
+									console.log("non ", getValues().variants);
 									console.log(
 										"filtered",
-										getValues().variant.filter((iteam: any, index: any) => {
+										getValues().variants.filter((iteam: any, index: any) => {
 											return index != indexx;
 										})
 									);

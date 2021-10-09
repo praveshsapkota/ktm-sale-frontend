@@ -119,12 +119,6 @@ export const AddSubCatagoryForm: React.FC<props> = ({ data }) => {
 	const onSubmit: SubmitHandler<FormValues> = async (value: any) => {
 		console.log("submitted");
 		console.log(value);
-		const StatusValue = () => {
-			return new Promise((resolve) => {
-				value.status === "false" ? resolve(false) : resolve(true);
-			});
-		};
-		console.log("statusValue", await StatusValue());
 		ButtonState == "Add"
 			?
 			addImages({

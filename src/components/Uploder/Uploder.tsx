@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import BackupOutlinedIcon from "@material-ui/icons/BackupOutlined";
@@ -17,32 +18,21 @@ const img = {
 };
 
 function Uploader({ onChange, imageURL, control, name }: any) {
-	const [files, setFiles] = useState(
-		imageURL ? [{ name: "demo", preview: imageURL }] : []
-	);
-	// const [imgfile, setimgfile] = useState([] as any);
-	// // console.log(
-	// // 	files.map((value) => {
-	// // 		return value.name;
-	// // 	})
-	// // );
+	console.log(imageURL);
+	const sleep = (ms: any) => {
+		return new Promise((resolve) => setTimeout(resolve, ms));
+	};
+	const [files, setFiles] = useState(imageURL ? imageURL : []);
 
 	const { getRootProps, getInputProps } = useDropzone({
 		accept: "image/*",
 		multiple: true,
 		onDrop: useCallback(
 			(acceptedFiles) => {
-				// console.log(acceptedFiles);
-				// acceptedFiles.map((file: any) => {
-				// 	setimgfile((prevIteam: any) => [...prevIteam, file]);
-				// });
-
 				setFiles(
 					acceptedFiles.map((file: any) =>
 						// console.log(file);
-						Object.assign(file, {
-							preview: URL.createObjectURL(file),
-						})
+						URL.createObjectURL(file)
 					)
 				);
 				onChange(acceptedFiles);
@@ -51,18 +41,24 @@ function Uploader({ onChange, imageURL, control, name }: any) {
 		),
 	});
 
-	const thumbs = files.map((file) => (
-		<Thumb key={file.name}>
-			<div style={thumbInner}>
-				<img src={file.preview} style={img} alt={file.name} />
-			</div>
-		</Thumb>
-	));
+	const thumbs = files
+		? files.map((name: any, index: any) => (
+			<Thumb key={index}>
+				{/* {console.log(name)} */}
+				<div style={thumbInner}>
+					<img src={name} style={img} alt={"images"} />
+				</div>
+			</Thumb>
+		))
+		: [];
 
 	useEffect(
 		() => () => {
 			// Make sure to revoke the data uris to avoid memory leaks
-			files.forEach((file) => URL.revokeObjectURL(file.preview));
+			files.forEach((file: { preview: string }) => {
+				// console.log(file);
+				URL.revokeObjectURL(file.preview);
+			});
 		},
 		[files]
 	);
@@ -95,7 +91,7 @@ function Uploader({ onChange, imageURL, control, name }: any) {
 								</span>
 								<span style={{ fontFamily: "monospace" }}>
 									{" "}
-									your image here.
+									your Images here.
 								</span>
 							</div>
 						</Container>

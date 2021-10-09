@@ -38,6 +38,7 @@ export const ImageUploadWrapper = styled.div`
 export const FormFielsWrapper = styled.div`
 	width: 98%;
 	display: flex;
+	/* align-items: center; */
 	flex-direction: column;
 	/* align-items: center; */
 	justify-content: space-between;

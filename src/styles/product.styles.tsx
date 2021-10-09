@@ -9,9 +9,11 @@ export const MainDiv = styled.div`
 	align-items: center;
 	text-align: center;
 	margin-top: 8vh;
+	margin-bottom: 2vh;
 	justify-content: center;
 `;
 
 export const AddProductDiv = styled.div`
 	width: 80vw;
+	margin-bottom: 3vh;
 `;

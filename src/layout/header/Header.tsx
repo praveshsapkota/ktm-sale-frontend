@@ -4,8 +4,6 @@ import { Drawer } from "../../components/drawer/Drawer";
 import AccountMenu from "../../components/accountMenu/AccountMenu";
 import { AppBar } from "@material-ui/core";
 import Link from "next/link";
-import logo from "../../../public/logo1.png";
-
 interface props {}
 
 export const Header: React.FC<props> = () => {

@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components";
 import {
 	Autocomplete,
 	Button,
@@ -11,22 +10,28 @@ import {
 	TextField,
 } from "@material-ui/core";
 import { MainDiv } from "../styles/product.styles";
-import { AddProductFrom } from "../components/AddProductForm/AddProductForm";
+import { AddProductFrom } from "../components/AddProductForm/product_AddForm";
 import { ProductCard } from "../components/ProductCard/ProductCard";
 import { useDrawerState, useDrawerDispatch } from "context/DrawerContext";
-import { data } from "../context/data";
-interface props {}
+import { useQuery } from "@apollo/client";
+import { getProducts } from "../graphql/Query/products";
+import { datass } from "../context/data";
+import { usedrawerStore } from "store/drawerStore";
+import { ProductTable } from "../components/ProductsTable/ProductTable"
+interface props { }
 
 export const Products: React.FC<props> = () => {
 	const [catagory, setCatagory] = React.useState("");
 	const [subCatagory, setSubCatagorySelector] = React.useState("");
-	const dispatch = useDrawerDispatch();
-	const DrawerState = useDrawerState("isOpen");
-
-	const openDrawer = React.useCallback(
-		() => dispatch({ type: "OPEN_DRAWER" }),
-		[dispatch]
-	);
+	const useopenDrawer = usedrawerStore((state) => state.toggleState);
+	const openDrawer = () => {
+		useopenDrawer("OPEN_DRAWER", "CREATE_PRODUCT_FORM", null);
+	};
+	const {
+		data: productsData,
+		loading: productsLoading,
+		error: productsError,
+	} = useQuery(getProducts);
 
 	const handleChangeCatagory = (
 		event: React.ChangeEvent<{ value: unknown }>
@@ -41,21 +46,17 @@ export const Products: React.FC<props> = () => {
 
 	return (
 		<>
-			<AddProductFrom data={data} />
 			<MainDiv>
-				{/* <TopDiv> */}
-
 				<Grid
 					container
 					rowSpacing="10"
 					columnSpacing="10"
 					sx={{
-						// display: "flex",
 						justifyContent: "space-around",
 						alignItems: "center",
-						// textAlign: "center",
 						backgroundColor: "white",
 						margin: "5px",
+						marginBottom: "6vh",
 						padding: "20px 0px",
 						width: "90vw",
 					}}
@@ -92,7 +93,6 @@ export const Products: React.FC<props> = () => {
 									id="demo-simple-select-autowidth"
 									value={catagory}
 									onChange={handleChangeCatagory}
-									autoWidth
 									label="Type"
 								>
 									<MenuItem value="">
@@ -122,7 +122,6 @@ export const Products: React.FC<props> = () => {
 									id="demo-simple-select-autowidth"
 									value={subCatagory}
 									onChange={handleChangeSubCatagory}
-									autoWidth
 									label="Catagory"
 								>
 									<MenuItem value="">
@@ -145,12 +144,41 @@ export const Products: React.FC<props> = () => {
 						/>
 					</Grid>
 					<Grid item xs={8} sm={8} md={2} style={{}}>
-						<Button variant="contained" onClick={openDrawer}>
+						<Button
+							variant="contained"
+							onClick={() => {
+								console.log("clicked");
+								openDrawer();
+							}}
+							sx={{
+								padding: "10px",
+								color: "white",
+								backgroundColor: "black",
+								boxShadow: "5px 5px 18px #726262, -5px -5px 18px #ffffff",
+								":hover": { backgroundColor: "#3f9719", color: "white" },
+								fontWeight: "600",
+								letterSpacing: 1,
+								fontSize: "14px",
+								// textTransform: "none",
+							}}
+						>
 							Add Product
 						</Button>
 					</Grid>
 				</Grid>
-				<div>{/* <ProductCard /> */}</div>
+
+				{productsData ? (
+					// <Grid>
+					// 	{productsData.products.map((iteam: any, index: any) => (
+					// 		<Grid key={index}>
+					// 			<ProductCard data={iteam} />
+					// 		</Grid>
+					// 	))}
+					// </Grid>
+					<ProductTable productData={productsData.products} />
+				) : (
+					console.log(productsError)
+				)}
 			</MainDiv>
 		</>
 	);

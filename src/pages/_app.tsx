@@ -1,56 +1,50 @@
 import "../styles/globals.css";
-import type { AppProps } from "next/app";
-// import dynamic from "next/dynamic";
 import { DrawerProvider } from "context/DrawerContext";
-import { ApolloProvider, gql, useQuery } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client";
 import { client } from "../utils/ApolloClient";
 import { Header } from "../layout/header/Header";
 
-function MyApp({ Component, pageProps }: AppProps) {
-	// const Header = dynamic(() => import("../layout/header/Header"), {
-	// 	ssr: false,
-	// });
-	// const getCatagories = gql`
-	// 	query Catagory {
-	// 		categories {
-	// 			name
-	// 		}
-	// 	}
-	// `;
+import * as React from "react";
+import Head from "next/head";
+import { AppProps } from "next/app";
+import { ThemeProvider } from "@material-ui/core/styles";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import theme from "../styles/theme";
+import AdminLayout from "layout/header/layout";
 
-	// const { loading, error, data } = useQuery(getCatagories);
-
-	// const catagoryData = () => {
-	// 	if (loading) {
-	// 		console.log("loading");
-	// 		return null;
-	// 	}
-	// 	if (error) {
-	// 		console.log(error);
-	// 		return error;
-	// 	}
-	// 	console.log(data);
-	// 	return data;
-	// };
-
+export default function MyApp(props: AppProps) {
+	const { Component, pageProps } = props;
 	return (
-		<ApolloProvider client={client}>
-			<div
-				style={{
-					backgroundColor: "whitesmoke",
-					alignItems: "center",
-					display: "flex",
-					flexDirection: "column",
-					justifyContent: "space-between",
-				}}
-			>
-				<DrawerProvider>
-					<Header />
-					<Component {...pageProps} />
-				</DrawerProvider>
-				{/* {catagoryData} */}
-			</div>
-		</ApolloProvider>
+		<React.Fragment>
+			<Head>
+				<title>KtmSale</title>
+				<link href="/favicon.ico" rel="icon" />
+				<meta
+					content="minimum-scale=1, initial-scale=1, width=device-width"
+					name="viewport"
+				/>
+			</Head>
+			<ThemeProvider theme={theme}>
+				<CssBaseline />
+				<ApolloProvider client={client}>
+					<div
+						style={{
+							backgroundColor: "whitesmoke",
+							alignItems: "center",
+							display: "flex",
+							flexDirection: "column",
+							justifyContent: "space-between",
+						}}
+					>
+						{/* <DrawerProvider>
+							<Header />
+							<Component {...pageProps} />
+						</DrawerProvider> */}
+						<AdminLayout />
+						<Component {...pageProps} />
+					</div>
+				</ApolloProvider>
+			</ThemeProvider>
+		</React.Fragment>
 	);
 }
-export default MyApp;

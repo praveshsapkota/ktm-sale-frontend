@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import {
 	Button,
 	FormControl,
@@ -9,6 +10,8 @@ import {
 import React from "react";
 import CancelIcon from "@material-ui/icons/Close";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { Thumb } from "../Uploder/Uploder.styles";
+
 import {
 	TopDiv,
 	FormTitle,
@@ -19,9 +22,9 @@ import {
 } from "./AddProductFrom.styles";
 import { Grid, TextField } from "@material-ui/core";
 import Uploder from "../Uploder/Uploder";
-import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { addProduct } from "../../graphql/Mutation/Product/AddProduct";
-import { getS3Url } from "../../graphql/Query/getS3SignedUrl";
+import { UploadImage } from "../../graphql/Mutation/imageUpload";
 import { usedrawerStore } from "../../store/drawerStore";
 import { DevTool } from "@hookform/devtools";
 import Variants from "./Variants_FieldArray";
@@ -32,16 +35,26 @@ type FormValues = {
 	name: string;
 	subCatagory: string;
 	description: string;
-	MainImage: string[];
-	variant: [
+	thumbnail: string;
+	productImages: string[];
+	slug: string;
+	status: string;
+	tags: string;
+	variants: [
 		{
 			sku: string;
 			varientName: string;
+			varientImage: String;
 			price: number | null;
 			no_of_stocks: number | null;
 			salePrice: number | null;
 			discountPercentage: number | null;
-			attributes: any[];
+			attributes: [
+				{
+					attrName: string;
+					attrValue: string | number | null;
+				}
+			];
 		}
 	];
 };
@@ -49,11 +62,35 @@ const defaultValue: FormValues = {
 	name: "pravesh",
 	subCatagory: "toothpaste",
 	description: "hero don",
-	MainImage: ["ssda", "dasda"],
-	variant: [
+	thumbnail: "https://ktmsale.s3.ap-south-1.amazonaws.com/1.jpg",
+	productImages: [
+		"https://ktmsale.s3.ap-south-1.amazonaws.com/1.jpg",
+		"https://ktmsale.s3.ap-south-1.amazonaws.com/1.jpg",
+	],
+	variants: [
 		{
 			sku: "",
 			varientName: "",
+			varientImage: "",
+			price: null,
+			no_of_stocks: null,
+			salePrice: null,
+			discountPercentage: null,
+			attributes: [
+				{
+					attrName: "ddf",
+					attrValue: "dffd",
+				},
+				{
+					attrName: "ddf",
+					attrValue: "dffd",
+				},
+			],
+		},
+		{
+			sku: "",
+			varientName: "",
+			varientImage: "",
 			price: null,
 			no_of_stocks: null,
 			salePrice: null,
@@ -74,23 +111,19 @@ const defaultValue: FormValues = {
 
 export const AddProductFrom: React.FC<props> = (props) => {
 	const { data: subCatagoryData } = useQuery(subCatagory_name);
+
+	//for the button click identification either its add or update
+	const [ButtonState, SetButtonState] = React.useState("");
+
 	const datas = props.data;
-	// console.log(datas);
+	console.log("at product add form ", datas);
 	const sleep = (ms: any) => {
 		return new Promise((resolve) => setTimeout(resolve, ms));
 	};
-	const [productDetails, { loading, error, data: addProductReturn }] =
-		useMutation(addProduct);
-	const [imgUrls, setImageUrls] = React.useState([] as any);
-	const [imageAccessUrl, setimageAccessUrl] = React.useState([] as any);
-	const [s3Uploadurl] = useLazyQuery(getS3Url, {
-		onCompleted: async (d) => {
-			console.log(d);
-			setImageUrls([...imgUrls, d]);
-			setimageAccessUrl([...imageAccessUrl, d.GetS3SecuredUrl.split("?")[0]]);
-		},
-	});
-
+	const [productThumbnail, setproductThumbnail] = React.useState(
+		datas ? { image: datas.image } : { image: undefined }
+	);
+	// FORM CONTROL AND INITIALIZITION
 	const {
 		handleSubmit,
 		register,
@@ -108,101 +141,102 @@ export const AddProductFrom: React.FC<props> = (props) => {
 		shouldUnregister: false,
 		reValidateMode: "onChange",
 	});
-
-	// let imagefield: any = [];
-	const imagefield = watch("MainImage");
 	const value = watch();
-	const PutFetch = async (url: any, photos: any) => {
-		console.log("running put");
-		photos.map(async (photos: any, i: any) => {
-			await fetch(url[i].GetS3SecuredUrl, {
-				method: "PUT",
-				body: photos,
-				headers: {
-					"Content-Type": "image/jpeg",
-				},
-			});
-			await sleep(1000);
-			console.log(imageAccessUrl, imgUrls);
-			if (imageAccessUrl.length == imgUrls.length) {
-				console.log("triggered add product mutation");
-				console.log(value);
-				productDetails({
-					variables: {
-						name: value.name,
-						price: value.price,
-						sku: value.Sku,
-						description: value.description,
-						unit: value.unit,
-						discount: value.discount,
-						subCatagory: value.SubCatagory,
-						salePrice: value.salePrice,
-						productThumbnail: imageAccessUrl,
-					},
-				});
-			}
-		});
-		await sleep(5000);
-		setImageUrls([]);
-		setimageAccessUrl([]);
-	};
 
 	React.useEffect(() => {
-		console.log(JSON.stringify(value.variant));
+		console.log(value);
+		// console.log(JSON.stringify(value.variant));
 	}, [value]);
-	React.useEffect(() => {
-		console.log("useeffect");
-		if (imagefield) {
-			if (imgUrls.length == imagefield.length && imgUrls.length != 0) {
-				PutFetch(imgUrls, imagefield);
-			}
-		}
-	}, [imgUrls]);
-
-	const onSubmit: SubmitHandler<FormValues> = async (value: any) => {
-		console.log("add product");
-		// console.log(value);
-		for (let f of imagefield) {
-			s3Uploadurl({
-				variables: {
-					imgname: f.path,
-				},
-			});
-			await sleep(2000);
-		}
-	};
 
 	//Drawer control
 	const usecloseDrawer = usedrawerStore((state) => state.toggleState);
-	const closeDrawer = (event: { preventDefault: () => void }) => {
-		event.preventDefault();
+	const closeDrawer = () => {
 		usecloseDrawer("CLOSE_DRAWER", null, null);
 	};
-
+	//handel Product Images dropzone to registered form
 	const handleUploader = (files: any) => {
-		setValue("image", files);
+		setValue("productImages", files);
 		console.log(files);
 	};
 
-	// const catagoryData = () => {
-	// 	if (loading) {
-	// 		console.log("loading");
-	// 		return null;
-	// 	}
-	// 	if (error) {
-	// 		console.log(error);
-	// 		return error;
-	// 	}
-	// 	// console.log(addProductReturn);
-	// 	return addProductReturn;
-	// };
-	// catagoryData();
+	//handels product thumbnail dropzone to registered form
+	const handThumbnailleUploader = (files: any) => {
+		setValue("thumbnail", files);
+		console.log(files);
+	};
+
+	//MUTATION FOR IMAGES UPLOAD
+	const [
+		addImages,
+		{
+			data: ImagesLocationData,
+			error: ImageUploadError,
+			loading: ImageUploadLoading,
+		},
+	] = useMutation(UploadImage);
+	const [
+		addproduct,
+		{ data: productdata, error: addProductError, loading: addProductLoading },
+	] = useMutation(addProduct);
+
+	//onSubmit Handler
+	const onSubmit: SubmitHandler<FormValues> = async (value: any) => {
+		console.log("onSubmit clicked");
+		var thumbnailAccessUrls: any = null;
+		await sleep(1000);
+		addImages({
+			variables: {
+				files: value.thumbnail,
+			},
+		})
+			.then((thumbRes) => {
+				thumbnailAccessUrls = thumbRes.data.S3ImageUpload[0];
+				addImages({
+					variables: {
+						files: value.productImages,
+					},
+				})
+					.then((imagesRes) => {
+						addproduct({
+							variables: {
+								name: value.name,
+								slug: value.slug,
+								description: value.description,
+								subCategory: value.subCatagory,
+								productThumbnail: thumbnailAccessUrls,
+								productImage: imagesRes.data.S3ImageUpload,
+								status: value.status,
+								seoTags: value.tags,
+								variants: value.variants,
+							},
+						})
+							.then((res) => {
+								console.log(res);
+								closeDrawer();
+							})
+							.catch((err) => {
+								console.log(err, "error adding new product");
+							});
+					})
+					.catch((err) => {
+						console.log(err, "unable to upload product Images");
+					});
+			})
+			.catch((err) => {
+				console.log(err, "unable to upload thumbnail");
+			});
+	};
+
 	return (
 		<>
 			<MainDiv>
 				{/* {catagoryData} */}
 				<TopDiv>
-					<FormTitle>Add / Update Products</FormTitle>
+					{datas ? (
+						<FormTitle>Update Product</FormTitle>
+					) : (
+						<FormTitle>Add Product</FormTitle>
+					)}
 					<IconButton onClick={closeDrawer}>
 						<CancelIcon fontSize="large" sx={{ justifyContent: "" }} />
 					</IconButton>
@@ -222,56 +256,138 @@ export const AddProductFrom: React.FC<props> = (props) => {
 									<Grid item xs={12} md={3} lg={4} sm={12}>
 										<span
 											style={{
-												fontSize: "13px",
+												fontSize: "18px",
 												fontWeight: 600,
 												fontFamily: "monospace",
 											}}
 										>
-											Upload your Image here
+											Images Section
 										</span>
 									</Grid>
-
-									<Grid
-										item
-										xs={12}
-										md={6}
-										lg={6}
-										sm={12}
-										sx={{
-											backgroundColor: "white",
-											padding: "10px",
-											minHeight: "150px",
-											display: "flex",
-											justifyContent: "center",
-											alignItems: "center",
-										}}
-									>
-										<Uploder
-											onChange={handleUploader}
-											imageURL={datas ? datas.image : []}
-											control={control}
-											name="image"
-										/>
+									<Grid container columnGap={20} rowGap={8}>
+										<Grid container rowGap={1}>
+											<Grid item xs={12} md={4} lg={4} sm={12}>
+												<span
+													style={{
+														fontSize: "12px",
+														fontWeight: 600,
+														fontFamily: "monospace",
+														marginBottom: "1rem",
+													}}
+												>
+													Product Thumbnail / main Display photo
+												</span>
+											</Grid>
+											<Grid item xs={12} md={12} lg={8} sm={12} sx={{
+												backgroundColor: "white",
+												padding: "10px",
+												minHeight: "150px",
+												display: "flex",
+												justifyContent: "center",
+												alignItems: "center",
+											}}>
+												{/* <div>
+													<input
+														type="file"
+														{...register("thumbnail", { required: true })}
+														onChange={(e) => {
+															e.target.files[0]
+																? setproductThumbnail({
+																	image: URL.createObjectURL(
+																		e.target.files[0]
+																	),
+																})
+																: null;
+														}}
+													/>
+													{productThumbnail.image ? (
+														<Thumb>
+															<img
+																width="150px"
+																height="100px"
+																src={productThumbnail.image}
+																alt="productThumbnail"
+															/>
+														</Thumb>
+													) : null}
+												</div> */}
+												<Uploder
+													onChange={handThumbnailleUploader}
+													imageURL={datas ? [datas.image] : []}
+													control={control}
+													name="image"
+												/>
+											</Grid>
+										</Grid>
+										<Grid container rowGap={1}>
+											<Grid item xs={12} md={4} lg={4} sm={12}>
+												<span
+													style={{
+														fontSize: "12px",
+														fontWeight: 600,
+														fontFamily: "monospace",
+													}}
+												>
+													Upload Product Images Below
+												</span>
+											</Grid>
+											<Grid
+												item
+												xs={12}
+												md={12}
+												lg={8}
+												sm={12}
+												sx={{
+													backgroundColor: "white",
+													padding: "10px",
+													minHeight: "150px",
+													display: "flex",
+													justifyContent: "center",
+													alignItems: "center",
+												}}
+											>
+												<Uploder
+													onChange={handleUploader}
+													imageURL={datas ? datas.productImages : []}
+													control={control}
+													name="image"
+												/>
+											</Grid>
+										</Grid>
 									</Grid>
 								</Grid>
 							</ImageUploadWrapper>
 						</Grid>
-						<Grid
-							item
-							xs={12}
-							sm={12}
-							md={12}
-							lg={12}
-							sx={{ margin: "2vw 2vh" }}
-						>
+						<Grid item xs={12} sm={12} md={12} lg={12} sx={{ margin: "1vh" }}>
 							<FormFielsWrapper>
-								<span>Enter necessary Information below</span>
+								<span
+									style={{
+										fontSize: "18px",
+										fontWeight: 600,
+										fontFamily: "monospace",
+									}}
+								>
+									Enter necessary Information below
+								</span>
 								<Grid
 									container
 									rowSpacing={3}
 									paddingY={3}
 									paddingX={2}
-									sx={{ alignItems: "center", justifyContent: "center" }}
+									// sx={{
+									// 	backgroundColor: "white",
+									// 	width: "90%",
+									// 	// padding: "10px",
+									// 	// minHeight: "150px",
+									// 	// display: "flex",
+									// 	justifyContent: "center",
+									// 	alignItems: "center",
+									// }}
+									sx={{
+										alignItems: "center",
+										justifyContent: "center",
+										color: "white",
+									}}
 								>
 									<Grid item xs={12} md={12} lg={11} sm={12}>
 										<Controller
@@ -283,6 +399,23 @@ export const AddProductFrom: React.FC<props> = (props) => {
 													fullWidth
 													label="Name"
 													variant="outlined"
+													style={{ backgroundColor: "whitesmoke" }}
+													{...field}
+												/>
+											)}
+										/>
+									</Grid>
+									<Grid item xs={12} md={12} lg={11} sm={12}>
+										<Controller
+											name="slug"
+											control={control}
+											rules={{ required: true }}
+											render={({ field }) => (
+												<TextField
+													fullWidth
+													label="Slug"
+													variant="outlined"
+													autoComplete="off"
 													style={{ backgroundColor: "whitesmoke" }}
 													{...field}
 												/>
@@ -325,11 +458,11 @@ export const AddProductFrom: React.FC<props> = (props) => {
 												rules={{ required: true }}
 												render={({ field: { value, onChange } }) => (
 													<Select
-														labelId="demo-simple-select-autowidth-label"
 														id="demo-simple-select-autowidth"
 														label="Sub catagory"
 														onChange={onChange}
-														value={value || ""}
+														// value={value || ""}
+														defaultValue={value ? value.name : ""}
 													>
 														{subCatagoryData ? (
 															subCatagoryData.subCatagories.map(
@@ -351,6 +484,49 @@ export const AddProductFrom: React.FC<props> = (props) => {
 											/>
 										</FormControl>
 									</Grid>
+									<Grid item xs={12} md={12} lg={11} sm={12}>
+										<Controller
+											name="tags"
+											control={control}
+											rules={{ required: true }}
+											render={({ field }) => (
+												<TextField
+													fullWidth
+													label="SeoTags"
+													variant="outlined"
+													autoComplete="off"
+													style={{ backgroundColor: "whitesmoke" }}
+													{...field}
+												/>
+											)}
+										/>
+									</Grid>
+									<Grid item xs={12} md={12} lg={11} sm={12}>
+										<FormControl
+											sx={{
+												minWidth: "100%",
+												backgroundColor: "whitesmoke",
+											}}
+										>
+											<InputLabel>Status</InputLabel>
+											<Controller
+												name="status"
+												control={control}
+												rules={{ required: true }}
+												render={({ field: { value, onChange } }) => (
+													<Select
+														id="demo-simple-select-autowidth"
+														label="status"
+														onChange={onChange}
+														defaultValue={value || ""}
+													>
+														<MenuItem value={"true"}>true</MenuItem>
+														<MenuItem value={"false"}>false</MenuItem>
+													</Select>
+												)}
+											/>
+										</FormControl>
+									</Grid>
 								</Grid>
 								<Grid
 									container
@@ -360,7 +536,15 @@ export const AddProductFrom: React.FC<props> = (props) => {
 									sx={{ alignItems: "center", justifyContent: "center" }}
 								>
 									<Grid item xs={12} md={12} lg={12} sm={12}>
-										<span>Add Products Varients Below</span>
+										<span
+											style={{
+												fontSize: "12px",
+												fontWeight: 600,
+												fontFamily: "monospace",
+											}}
+										>
+											Add Products Varients Below
+										</span>
 									</Grid>
 									<Grid item xs={12} md={12} lg={12} sm={12}>
 										<Variants
@@ -380,20 +564,36 @@ export const AddProductFrom: React.FC<props> = (props) => {
 						>
 							Cancel
 						</Button>
-
-						<Button
-							variant="contained"
-							type="submit"
-							size="medium"
-							sx={{
-								width: "30vw",
-								backgroundColor: "green",
-								fontWeight: "600",
-							}}
-						// onClick={closeDrawer}
-						>
-							Submit
-						</Button>
+						{datas == null ? (
+							<Button
+								onClick={() => SetButtonState("Add")}
+								variant="contained"
+								type="submit"
+								size="medium"
+								sx={{
+									width: "30vw",
+									backgroundColor: "green",
+									fontWeight: "600",
+								}}
+							>
+								Add Product
+							</Button>
+						) : (
+							<Button
+								onClick={() => SetButtonState("Update")}
+								variant="contained"
+								type="submit"
+								size="medium"
+								sx={{
+									width: "30vw",
+									backgroundColor: "green",
+									fontWeight: "600",
+								}}
+							// onClick={closeDrawer}
+							>
+								Update Product
+							</Button>
+						)}
 					</BottomWrapper>
 				</form>
 				<DevTool control={control} />;

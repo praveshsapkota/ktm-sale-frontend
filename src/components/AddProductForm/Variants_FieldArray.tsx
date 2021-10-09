@@ -18,13 +18,13 @@ import { datass } from "context/data";
 let renderCount = 0;
 interface Column {
 	id:
-		| "Variant Name"
-		| "Sku"
-		| "Price"
-		| "Sale Price"
-		| "Quantity"
-		| "Discount Percentage"
-		| "Attributes";
+	| "Variant Name"
+	| "Sku"
+	| "Price"
+	| "Sale Price"
+	| "Quantity"
+	| "Discount Percentage"
+	| "Attributes";
 	label: string;
 	minWidth?: number;
 	align?: "center" | "left";
@@ -81,7 +81,7 @@ const NumberInput = (arg: Omit<ControllerProps, "render">) => (
 				onChange={(e) =>
 					field.onChange(
 						Number.isNaN(parseFloat(e.target.value))
-							? 0
+							? null
 							: parseFloat(e.target.value)
 					)
 				}
@@ -99,7 +99,7 @@ export default function Fields({
 }: any) {
 	const { fields, append, remove } = useFieldArray({
 		control: control,
-		name: "variant",
+		name: "variants",
 	});
 	const [openAttrModal, setOpenAttrModal] = React.useState(false);
 	const [indexState, SetindexState] = React.useState(Number);
@@ -146,6 +146,7 @@ export default function Fields({
 						</TableHead>
 						<TableBody>
 							{fields.map((row, index) => {
+								console.log(row);
 								return (
 									<TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
 										<TableCell align={"center"}>
@@ -155,7 +156,7 @@ export default function Fields({
 													outline: "none",
 													padding: "10px ",
 												}}
-												{...register(`variant[${index}].varientName`, {
+												{...register(`variants[${index}].varientName`, {
 													require: true,
 												})}
 											/>
@@ -168,7 +169,7 @@ export default function Fields({
 													outline: "none",
 													padding: "10px ",
 												}}
-												{...register(`variant[${index}].sku`, {
+												{...register(`variants[${index}].sku`, {
 													require: true,
 												})}
 											/>
@@ -176,25 +177,25 @@ export default function Fields({
 										<TableCell align={"center"}>
 											<NumberInput
 												control={control}
-												name={`variant[${index}].price`}
+												name={`variants[${index}].price`}
 											/>
 										</TableCell>
 										<TableCell align={"center"}>
 											<NumberInput
 												control={control}
-												name={`variant[${index}].salePrice`}
+												name={`variants[${index}].salePrice`}
 											/>
 										</TableCell>
 										<TableCell align={"center"}>
 											<NumberInput
 												control={control}
-												name={`variant[${index}].no_of_stocks`}
+												name={`variants[${index}].no_of_stocks`}
 											/>
 										</TableCell>
 										<TableCell align={"center"}>
 											<NumberInput
 												control={control}
-												name={`variant[${index}].discountPercentage`}
+												name={`variants[${index}].discountPercentage`}
 											/>
 										</TableCell>
 										<TableCell align={"center"}>
@@ -225,8 +226,8 @@ export default function Fields({
 													/>
 													<span>
 														[
-														{getValues(`variant[${index}].attributes`)
-															? getValues(`variant[${index}].attributes`).length
+														{getValues(`variants[${index}].attributes`)
+															? getValues(`variants[${index}].attributes`).length
 															: 0}
 														]
 													</span>
