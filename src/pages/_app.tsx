@@ -1,5 +1,4 @@
 import "../styles/globals.css";
-import { DrawerProvider } from "context/DrawerContext";
 import { ApolloProvider } from "@apollo/client";
 import { client } from "../utils/ApolloClient";
 import { Header } from "../layout/header/Header";
@@ -36,10 +35,6 @@ export default function MyApp(props: AppProps) {
 							justifyContent: "space-between",
 						}}
 					>
-						{/* <DrawerProvider>
-							<Header />
-							<Component {...pageProps} />
-						</DrawerProvider> */}
 						<AdminLayout />
 						<Component {...pageProps} />
 					</div>
