@@ -80,10 +80,6 @@ type FormValues = {
 // 				{
 // 					attrName: "",
 // 					attrValue: "",
-<<<<<<< HEAD:src/components/AddProductForm/addProductForm.tsx
-// 				},
-
-=======
 // 				}
 // 			],
 // 		},
@@ -104,7 +100,6 @@ type FormValues = {
 // 					attrName: "ddf",
 // 					attrValue: "dffd",
 // 				},
->>>>>>> e8c71d10e8500ff8efac02a93884fd725dc4a002:src/components/AddProductForm/product_AddForm copy.tsx
 // 			],
 // 		},
 // 	],
