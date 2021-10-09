@@ -1,12 +1,18 @@
 import { TableContainer, Paper, TableHead, Button, TableRow, TableCell, TableBody, Table } from '@material-ui/core';
 import React from 'react'
 import Image from "next/image"
+import { usedrawerStore } from "../../store/drawerStore";
+
 interface props {
     productData: any[]
 }
 
 
 export const ProductTable: React.FC<props> = ({ productData }) => {
+    const useopenDrawer = usedrawerStore((state) => state.toggleState);
+    const openEditProductDrawer = (DrawerState: string, component: string, data: any) => {
+        useopenDrawer(DrawerState, component, data);
+    };
     return (<>
         <Paper elevation={8} sx={{ width: '100%', maxWidth: 1200, overflow: 'hidden' }}>
             <TableContainer sx={{ maxHeight: 700 }}>
@@ -83,6 +89,7 @@ export const ProductTable: React.FC<props> = ({ productData }) => {
                                         }}
                                         onClick={() => {
                                             // openEditCatagoryDrawer(iteam);
+                                            openEditProductDrawer("OPEN_DRAWER", "UPDATE_PRODUCT_FORM", iteam)
                                         }}
                                     >
                                         Edit

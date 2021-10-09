@@ -2,8 +2,18 @@
 // const withOptimizedImages = require('next-optimized-images');
 
 module.exports = {
-  reactStrictMode: true,
-}
+	// reactStrictMode: false,
+	images: {
+		domains: ["ktmsale.s3.ap-south-1.amazonaws.com"],
+	},
+};
+
+// module.exports = {
+//   images: {
+//     domains: ['https://image.tmdb.org/', 'https://api.themoviedb.org/'],
+//   },
+// };
+
 // // next.js configuration
 // const nextConfig = {
 //   async redirects() {

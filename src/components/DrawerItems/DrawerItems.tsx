@@ -9,7 +9,7 @@ import { usedrawerStore } from "../../store/drawerStore";
 // import StaffMemberForm from '../StaffMemberForm/StaffMemberForm';
 // import Sidebar from '../Layout/Sidebar/Sidebar';
 // import { AddProductFrom } from "../AddProductForm/product_AddForm";
-import { AddProductFrom } from "../AddProductForm/product_AddForm copy";
+import { AddProductFrom } from "../AddProductForm/addProductForm";
 import { AddCatagoryForm } from "../addCatagoryForm/addCatagoryForm";
 import { AddSubCatagoryForm } from "../addSubCatagoryForm/addSubCatagoryForm";
 
