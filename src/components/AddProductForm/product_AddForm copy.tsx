@@ -58,52 +58,52 @@ type FormValues = {
 		}
 	];
 };
-const defaultValue: FormValues = {
-	name: "pravesh",
-	subCatagory: "toothpaste",
-	description: "hero don",
-	thumbnail: "https://ktmsale.s3.ap-south-1.amazonaws.com/1.jpg",
-	productImages: [
-		"https://ktmsale.s3.ap-south-1.amazonaws.com/1.jpg",
-		"https://ktmsale.s3.ap-south-1.amazonaws.com/1.jpg",
-	],
-	variants: [
-		{
-			sku: "",
-			varientName: "",
-			varientImage: "",
-			price: null,
-			no_of_stocks: null,
-			salePrice: null,
-			discountPercentage: null,
-			attributes: [
-				{
-					attrName: "",
-					attrValue: "",
-				}
-			],
-		},
-		{
-			sku: "",
-			varientName: "",
-			varientImage: "",
-			price: null,
-			no_of_stocks: null,
-			salePrice: null,
-			discountPercentage: null,
-			attributes: [
-				{
-					attrName: "ddf",
-					attrValue: "dffd",
-				},
-				{
-					attrName: "ddf",
-					attrValue: "dffd",
-				},
-			],
-		},
-	],
-};
+// const defaultValue: FormValues = {
+// 	name: "pravesh",
+// 	subCatagory: "toothpaste",
+// 	description: "hero don",
+// 	thumbnail: "https://ktmsale.s3.ap-south-1.amazonaws.com/1.jpg",
+// 	productImages: [
+// 		"https://ktmsale.s3.ap-south-1.amazonaws.com/1.jpg",
+// 		"https://ktmsale.s3.ap-south-1.amazonaws.com/1.jpg",
+// 	],
+// 	variants: [
+// 		{
+// 			sku: "",
+// 			varientName: "",
+// 			varientImage: "",
+// 			price: null,
+// 			no_of_stocks: null,
+// 			salePrice: null,
+// 			discountPercentage: null,
+// 			attributes: [
+// 				{
+// 					attrName: "",
+// 					attrValue: "",
+// 				}
+// 			],
+// 		},
+// 		{
+// 			sku: "",
+// 			varientName: "",
+// 			varientImage: "",
+// 			price: null,
+// 			no_of_stocks: null,
+// 			salePrice: null,
+// 			discountPercentage: null,
+// 			attributes: [
+// 				{
+// 					attrName: "ddf",
+// 					attrValue: "dffd",
+// 				},
+// 				{
+// 					attrName: "ddf",
+// 					attrValue: "dffd",
+// 				},
+// 			],
+// 		},
+// 	],
+// };
 
 export const AddProductFrom: React.FC<props> = (props) => {
 	const { data: subCatagoryData } = useQuery(subCatagory_name);
