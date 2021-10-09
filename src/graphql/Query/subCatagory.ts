@@ -4,8 +4,14 @@ export const subCatagory_name = gql`
 	query {
 		subCatagories {
 			name
-			id
 			slug
+			id
+			image: subCatagoryImage
+			status
+			tags: seoTags
+			category: Catagory {
+				name
+			}
 		}
 	}
 `;

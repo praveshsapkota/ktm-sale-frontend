@@ -1,21 +1,24 @@
 import { gql } from "@apollo/client";
 
 export const getProducts = gql`
-	query getProducts {
-		products {
-			name
-			price
-			salePrice
-			sku
-			unit
-			discount
-			description
-			image: Product_thumbnail
-			SubCatagory {
+	query getproducts {
+			products {
 				name
+				description
+				name
+				image : product_thumbnail
+				productImages : productImage
+				slug
+				subCatagory {
+					name
+				}
+				variants
+				status
+				tags : seoTags
+				__typename
 			}
 		}
-	}
+	
 `;
 
 // export const filtered_products = gql``;
