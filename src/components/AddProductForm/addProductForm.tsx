@@ -80,8 +80,31 @@ type FormValues = {
 // 				{
 // 					attrName: "",
 // 					attrValue: "",
+<<<<<<< HEAD:src/components/AddProductForm/addProductForm.tsx
 // 				},
 
+=======
+// 				}
+// 			],
+// 		},
+// 		{
+// 			sku: "",
+// 			varientName: "",
+// 			varientImage: "",
+// 			price: null,
+// 			no_of_stocks: null,
+// 			salePrice: null,
+// 			discountPercentage: null,
+// 			attributes: [
+// 				{
+// 					attrName: "ddf",
+// 					attrValue: "dffd",
+// 				},
+// 				{
+// 					attrName: "ddf",
+// 					attrValue: "dffd",
+// 				},
+>>>>>>> e8c71d10e8500ff8efac02a93884fd725dc4a002:src/components/AddProductForm/product_AddForm copy.tsx
 // 			],
 // 		},
 // 	],
