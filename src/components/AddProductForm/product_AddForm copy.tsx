@@ -78,13 +78,9 @@ const defaultValue: FormValues = {
 			discountPercentage: null,
 			attributes: [
 				{
-					attrName: "ddf",
-					attrValue: "dffd",
-				},
-				{
-					attrName: "ddf",
-					attrValue: "dffd",
-				},
+					attrName: "",
+					attrValue: "",
+				}
 			],
 		},
 		{
