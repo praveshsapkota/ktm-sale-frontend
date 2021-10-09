@@ -350,7 +350,7 @@ export const AddSubCatagoryForm: React.FC<props> = ({ data }) => {
 															id="demo-simple-select-autowidth"
 															label="Sub catagory"
 															onChange={onChange}
-															defaultValue={value ? value.name : ""}
+															defaultValue={data ? data.category.name : ""}
 														// value={value.name}
 														// value={value.name || ""}
 														>
