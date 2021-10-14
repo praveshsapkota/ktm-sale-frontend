@@ -12,8 +12,11 @@ import PersonAdd from "@material-ui/icons/PersonAdd";
 import Settings from "@material-ui/icons/Settings";
 import Logout from "@material-ui/icons/Logout";
 import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
 
-export default function AccountMenu() {
+const AccountMenu = () => {
+	const { data, status } = useSession();
+	console.log(data?.user?.image, "session");
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -22,12 +25,25 @@ export default function AccountMenu() {
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
+	const [profileImg, setProfileImg] = React.useState(data?.user?.image);
+
+	React.useEffect(() => {
+		setProfileImg(data?.user?.image);
+	}, [data?.user?.image]);
+
 	return (
 		<React.Fragment>
 			<Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
 				<Tooltip title="Account settings">
 					<IconButton onClick={handleClick} size="small" sx={{ ml: 2 }}>
-						<Avatar sx={{ width: 32, height: 32 }} src="" alt="ethan" />
+						{status === "authenticated" ? (
+							<Avatar
+								sx={{ width: 32, height: 32 }}
+								src={profileImg}
+								alt={data?.user?.name}
+							/>
+						) : // <button>Logout</button>
+						null}
 					</IconButton>
 				</Tooltip>
 			</Box>
@@ -82,12 +98,16 @@ export default function AccountMenu() {
 					</MenuItem>
 				</Link>
 				<MenuItem>
-					<ListItemIcon>
-						<Logout fontSize="small" />
-					</ListItemIcon>
-					Logout
+					<div onClick={() => signOut()}>
+						<ListItemIcon>
+							<Logout fontSize="small" />
+						</ListItemIcon>
+						Logout
+					</div>
 				</MenuItem>
 			</Menu>
 		</React.Fragment>
 	);
-}
+};
+
+export default AccountMenu;

@@ -146,7 +146,7 @@ export default function Fields({
 						</TableHead>
 						<TableBody>
 							{fields.map((row, index) => {
-								console.log(row);
+								// console.log(row);
 								return (
 									<TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
 										<TableCell align={"center"}>
@@ -247,7 +247,7 @@ export default function Fields({
 												// 	unregister={unregister}
 												// />
 											}
-											{console.log(ModalForAttributes())}
+											{/* {console.log(ModalForAttributes())} */}
 										</TableCell>
 										<TableCell align={"center"}>
 											<IconButton onClick={() => remove(index)}>

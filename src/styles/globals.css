@@ -8,3 +8,33 @@ body {
     background-color: whitesmoke; */
 	overflow-x: hidden;
 }
+
+.LoginBackground {
+	/* background: #0F2027; 
+	background: -webkit-linear-gradient(to right, #2C5364, #203A43, #0F2027);  
+	background: linear-gradient(to right, #2C5364, #203A43, #0F2027);  */
+
+  background-color: #0876ea;
+background-image: linear-gradient(315deg, #0876ea 1%, #2AF598 51%, #040202 100%);
+
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.authPanal {
+	width: 30vw;
+	height: 80vh;
+	max-height: 700px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-width: 300px;
+	background: rgba(252, 237, 237, 0.103);
+	backdrop-filter: blur(5px) ;
+	color: rgba(255, 239, 239, 0.146);
+	border-radius: 5px;
+	box-shadow: 4px 4px 8px #19549387 , 
+            -4px -4px 8px #42c26f;
+}

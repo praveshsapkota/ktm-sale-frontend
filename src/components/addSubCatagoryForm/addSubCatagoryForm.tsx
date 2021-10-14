@@ -1,4 +1,3 @@
-import { DevTool } from "@hookform/devtools";
 import {
 	IconButton,
 	TextField,
@@ -464,7 +463,6 @@ export const AddSubCatagoryForm: React.FC<props> = ({ data }) => {
 						)}
 					</BottomWrapper>
 				</form>
-				<DevTool control={control} />;
 			</AddSubCatagoryForm_Wrapper>
 		</>
 	);

@@ -41,7 +41,7 @@ export const ProductTable: React.FC<props> = ({ productData }) => {
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell align="center">
-                                    {iteam.image ? <Image width={70} height={50} src={iteam.image} alt={`${iteam.name} image `} /> : null}
+                                    {iteam.thumbnail ? <Image width={70} height={50} src={iteam.thumbnail} alt={`${iteam.name} image `} /> : null}
 
                                 </TableCell>
                                 <TableCell align="center">{iteam.name}</TableCell>

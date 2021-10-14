@@ -4,7 +4,7 @@
 module.exports = {
 	// reactStrictMode: false,
 	images: {
-		domains: ["ktmsale.s3.ap-south-1.amazonaws.com"],
+		domains: ["ktmsale.s3.ap-south-1.amazonaws.com", "img.icons8.com"],
 	},
 };
 

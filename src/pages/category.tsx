@@ -8,6 +8,9 @@ import {
 	SubCatagoryWrapper,
 	TopMenu,
 	MainDiv,
+	EditButton,
+	StatusFalse,
+	StatusTrue,
 } from "../styles/catagory.styles";
 import {
 	FormControl,

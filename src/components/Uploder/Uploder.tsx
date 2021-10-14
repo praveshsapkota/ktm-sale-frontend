@@ -18,7 +18,7 @@ const img = {
 };
 
 function Uploader({ onChange, imageURL, control, name }: any) {
-	console.log(imageURL);
+	// console.log(imageURL);
 	const sleep = (ms: any) => {
 		return new Promise((resolve) => setTimeout(resolve, ms));
 	};

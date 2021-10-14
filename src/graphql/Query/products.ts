@@ -6,7 +6,7 @@ export const getProducts = gql`
 				name
 				description
 				name
-				image : product_thumbnail
+				thumbnail : product_thumbnail
 				productImages : productImage
 				slug
 				subCatagory {

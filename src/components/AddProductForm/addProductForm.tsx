@@ -10,7 +10,6 @@ import {
 import React from "react";
 import CancelIcon from "@material-ui/icons/Close";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import { Thumb } from "../Uploder/Uploder.styles";
 
 import {
 	TopDiv,
@@ -24,18 +23,25 @@ import { Grid, TextField } from "@material-ui/core";
 import Uploder from "../Uploder/Uploder";
 import { useQuery, useMutation } from "@apollo/client";
 import { addProduct } from "../../graphql/Mutation/Product/AddProduct";
+import {
+	UpdateProductWithOnlyThumbnail,
+	UpdateProductWithonlyProductImages,
+	UpdateProductWithoutImage,
+	UpdateProductWithbothImage,
+} from "../../graphql/Mutation/Product/UpdateProduct";
 import { UploadImage } from "../../graphql/Mutation/imageUpload";
 import { usedrawerStore } from "../../store/drawerStore";
 import { DevTool } from "@hookform/devtools";
 import Variants from "./variants_FieldArray";
 import { subCatagory_name } from "../../graphql/Query/subCatagory";
+import { snackBarStore } from "../../store/snackBarStore";
 
 type props = any;
 type FormValues = {
 	name: string;
 	subCatagory: object | string;
 	description: string;
-	thumbnail: string;
+	thumbnail: string[];
 	productImages: string[];
 	slug: string;
 	status: string;
@@ -108,17 +114,17 @@ type FormValues = {
 export const AddProductFrom: React.FC<props> = (props) => {
 	const { data: subCatagoryData } = useQuery(subCatagory_name);
 
+	//getting snackbar from the store
+	const snackbarOpen = snackBarStore((state) => state.toogleSnackBar);
+
 	//for the button click identification either its add or update
 	const [ButtonState, SetButtonState] = React.useState("");
 
 	const datas = props.data;
-	console.log("at product add form ", datas);
+	// console.log("at product add form ", datas);
 	const sleep = (ms: any) => {
 		return new Promise((resolve) => setTimeout(resolve, ms));
 	};
-	const [productThumbnail, setproductThumbnail] = React.useState(
-		datas ? { image: datas.image } : { image: undefined }
-	);
 	// FORM CONTROL AND INITIALIZITION
 	const {
 		handleSubmit,
@@ -138,7 +144,6 @@ export const AddProductFrom: React.FC<props> = (props) => {
 		reValidateMode: "onChange",
 	});
 	const value = watch();
-
 	React.useEffect(() => {
 		console.log(value);
 		// console.log(JSON.stringify(value.variant));
@@ -170,57 +175,267 @@ export const AddProductFrom: React.FC<props> = (props) => {
 			loading: ImageUploadLoading,
 		},
 	] = useMutation(UploadImage);
+
+	//mutation for add product
 	const [
 		addproduct,
 		{ data: productdata, error: addProductError, loading: addProductLoading },
 	] = useMutation(addProduct);
 
+	//mutation for update product without Image
+	const [updateProductWithoutImg] = useMutation(UpdateProductWithoutImage);
+
+	//mutation for update product with both Image
+	const [updateProductWithImg] = useMutation(UpdateProductWithbothImage);
+
+	//mutation for update product with only thumbnail
+	const [updateProductWithonlythumbnail] = useMutation(
+		UpdateProductWithOnlyThumbnail
+	);
+
+	//mutation for update product with only Product Images
+	const [updateProductWithonlyImg] = useMutation(
+		UpdateProductWithonlyProductImages
+	);
+
 	//onSubmit Handler
 	const onSubmit: SubmitHandler<FormValues> = async (value: any) => {
 		console.log("onSubmit clicked");
 		var thumbnailAccessUrls: any = null;
-		await sleep(1000);
-		addImages({
-			variables: {
-				files: value.thumbnail,
-			},
-		})
-			.then((thumbRes) => {
-				thumbnailAccessUrls = thumbRes.data.S3ImageUpload[0];
-				addImages({
-					variables: {
-						files: value.productImages,
-					},
-				})
-					.then((imagesRes) => {
-						addproduct({
-							variables: {
-								name: value.name,
-								slug: value.slug,
-								description: value.description,
-								subCategory: value.subCatagory,
-								productThumbnail: thumbnailAccessUrls,
-								productImage: imagesRes.data.S3ImageUpload,
-								status: value.status,
-								seoTags: value.tags,
-								variants: value.variants,
-							},
-						})
-							.then((res) => {
-								console.log(res);
-								closeDrawer();
-							})
-							.catch((err) => {
-								console.log(err, "error adding new product");
-							});
-					})
-					.catch((err) => {
-						console.log(err, "unable to upload product Images");
-					});
+		if (ButtonState == "Add") {
+			await sleep(1000);
+			console.log("inside add product");
+			addImages({
+				variables: {
+					files: value.thumbnail,
+				},
 			})
-			.catch((err) => {
-				console.log(err, "unable to upload thumbnail");
-			});
+				.then((thumbRes) => {
+					thumbnailAccessUrls = thumbRes.data.S3ImageUpload[0];
+					addImages({
+						variables: {
+							files: value.productImages,
+						},
+					})
+						.then((imagesRes) => {
+							addproduct({
+								variables: {
+									name: value.name,
+									slug: value.slug,
+									description: value.description,
+									subCategory: value.subCatagory,
+									productThumbnail: thumbnailAccessUrls,
+									productImage: imagesRes.data.S3ImageUpload,
+									status: value.status,
+									seoTags: value.tags,
+									variants: value.variants,
+								},
+							})
+								.then((res) => {
+									console.log(res);
+									closeDrawer();
+									snackbarOpen("OPEN", "Added new Product", "success");
+								})
+								.catch((err) => {
+									console.log(err, "error adding new product");
+									snackbarOpen("OPEN", "error adding new product", "error");
+								});
+						})
+						.catch((err) => {
+							console.log(err, "unable to upload product Images");
+							snackbarOpen("OPEN", "unable to upload product Images", "error");
+						});
+				})
+				.catch((err) => {
+					console.log(err, "unable to upload thumbnail");
+					snackbarOpen("OPEN", "unable to upload thumbnail", "error");
+				});
+		} else {
+			const mutationType = () => {
+				if (
+					typeof value.thumbnail == "string" &&
+					typeof value.productImages[0] == "string"
+				)
+					return "withoutImage";
+				else if (
+					typeof value.thumbnail[0] == "object" &&
+					typeof value.productImages[0] == "object"
+				)
+					return "withBothImage";
+				else if (
+					typeof value.thumbnail == "string" &&
+					typeof value.productImages[0] == "object"
+				)
+					return "withOnlyProductImage";
+				else
+					typeof value.thumbnail[0] == "object" &&
+						typeof value.productImages[0] == "string";
+				return "withOnlyProductThumbnail";
+			};
+			console.log("inside update");
+			switch (mutationType()) {
+				case "withoutImage": {
+					console.log("inside without image ");
+					return updateProductWithoutImg({
+						variables: {
+							name: value.name,
+							newSlug: value.slug,
+							slug: datas.slug,
+							description: value.description,
+							subCatagory: value.subCatagory.name
+								? value.subCatagory.name
+								: value.subCatagory,
+							status: value.status,
+							seoTags: value.tags,
+							variants: value.variants,
+						},
+					})
+						.then((res) => {
+							console.log("sss", res.data);
+							closeDrawer();
+							snackbarOpen(
+								"OPEN",
+								`updated Product ${res.data.updateOneProduct.name}`,
+								"success"
+							);
+						})
+						.catch((err) => {
+							console.log(err, "error updating  product withoutImages");
+							snackbarOpen(
+								"OPEN",
+								"unable to update product server error",
+								"error"
+							);
+						});
+				}
+				case "withBothImage": {
+					console.log("inside both image");
+					return addImages({
+						variables: {
+							files: value.thumbnail,
+						},
+					})
+						.then((thumbRes) => {
+							thumbnailAccessUrls = thumbRes.data.S3ImageUpload[0];
+							addImages({
+								variables: {
+									files: value.productImages,
+								},
+							})
+								.then((imagesRes) => {
+									updateProductWithImg({
+										variables: {
+											name: value.name,
+											newSlug: value.slug,
+											slug: datas.slug,
+											description: value.description,
+											subCatagory: value.subCatagory.name
+												? value.subCatagory.name
+												: value.subCatagory,
+											productThumbnail: thumbnailAccessUrls,
+											productImage: imagesRes.data.S3ImageUpload,
+											status: value.status,
+											seoTags: value.tags,
+											variants: value.variants,
+										},
+									})
+										.then((res) => {
+											console.log(res);
+											closeDrawer();
+										})
+										.catch((err) => {
+											console.log(err, "error updating  product");
+										});
+								})
+								.catch((err) => {
+									console.log(err, "unable to upload product Images");
+								});
+						})
+						.catch((err) => {
+							console.log(err, "unable to upload thumbnail");
+						});
+				}
+				case "withOnlyProductImage": {
+					console.log("inside productImage only");
+					return addImages({
+						variables: {
+							files: value.productImages,
+						},
+					})
+						.then((imagesRes) => {
+							updateProductWithonlyImg({
+								variables: {
+									name: value.name,
+									newSlug: value.slug,
+									slug: datas.slug,
+									description: value.description,
+									subCatagory: value.subCatagory.name
+										? value.subCatagory.name
+										: value.subCatagory,
+									productImage: imagesRes.data.S3ImageUpload,
+									status: value.status,
+									seoTags: value.tags,
+									variants: value.variants,
+								},
+							})
+								.then((res) => {
+									console.log(res);
+									closeDrawer();
+								})
+								.catch((err) => {
+									console.log(err, "error updating  product");
+								});
+						})
+						.catch((err) => {
+							console.log(err, "unable to upload product Images");
+						});
+				}
+				case "withOnlyProductThumbnail": {
+					console.log("inside thumbnail only");
+					return addImages({
+						variables: {
+							files: value.thumbnail,
+						},
+					})
+						.then((thumbRes) => {
+							thumbnailAccessUrls = thumbRes.data.S3ImageUpload[0];
+							updateProductWithonlythumbnail({
+								variables: {
+									name: value.name,
+									newSlug: value.slug,
+									slug: datas.slug,
+									description: value.description,
+									subCatagory: value.subCatagory.name
+										? value.subCatagory.name
+										: value.subCatagory,
+									productThumbnail: thumbnailAccessUrls,
+									status: value.status,
+									seoTags: value.tags,
+									variants: value.variants,
+								},
+							})
+								.then((res) => {
+									console.log(res);
+									closeDrawer();
+								})
+								.catch((err) => {
+									console.log(err, "error updating  product");
+								});
+						})
+						.catch((err) => {
+							console.log(err, "unable to upload thumbnail");
+						});
+				}
+
+				default: {
+					console.log(
+						"a",
+						typeof value.thumbnail,
+						typeof value.productImages[0]
+					);
+				}
+			}
+		}
 	};
 
 	return (
@@ -274,14 +489,21 @@ export const AddProductFrom: React.FC<props> = (props) => {
 													Product Thumbnail / main Display photo
 												</span>
 											</Grid>
-											<Grid item xs={12} md={12} lg={8} sm={12} sx={{
-												backgroundColor: "white",
-												padding: "10px",
-												minHeight: "150px",
-												display: "flex",
-												justifyContent: "center",
-												alignItems: "center",
-											}}>
+											<Grid
+												item
+												xs={12}
+												md={12}
+												lg={8}
+												sm={12}
+												sx={{
+													backgroundColor: "white",
+													padding: "10px",
+													minHeight: "150px",
+													display: "flex",
+													justifyContent: "center",
+													alignItems: "center",
+												}}
+											>
 												{/* <div>
 													<input
 														type="file"
@@ -309,9 +531,9 @@ export const AddProductFrom: React.FC<props> = (props) => {
 												</div> */}
 												<Uploder
 													onChange={handThumbnailleUploader}
-													imageURL={datas ? [datas.image] : []}
+													imageURL={datas ? [datas.thumbnail] : []}
 													control={control}
-													name="image"
+													name="thumbnail"
 												/>
 											</Grid>
 										</Grid>
@@ -346,7 +568,7 @@ export const AddProductFrom: React.FC<props> = (props) => {
 													onChange={handleUploader}
 													imageURL={datas ? datas.productImages : []}
 													control={control}
-													name="image"
+													name="productImages"
 												/>
 											</Grid>
 										</Grid>
@@ -458,7 +680,7 @@ export const AddProductFrom: React.FC<props> = (props) => {
 														label="Sub catagory"
 														onChange={onChange}
 														// value={value || ""}
-														defaultValue={value ? datas.subCatagory.name : ""}
+														defaultValue={datas ? datas.subCatagory.name : ""}
 													>
 														{subCatagoryData ? (
 															subCatagoryData.subCatagories.map(
