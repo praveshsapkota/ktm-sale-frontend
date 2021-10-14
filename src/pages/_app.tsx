@@ -1,4 +1,5 @@
 import "../styles/globals.css";
+import { DrawerProvider } from "context/DrawerContext";
 import { ApolloProvider } from "@apollo/client";
 import { client } from "../utils/ApolloClient";
 import { Header } from "../layout/header/Header";
@@ -10,6 +11,9 @@ import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import theme from "../styles/theme";
 import AdminLayout from "layout/header/layout";
+import { SessionProvider } from "next-auth/react";
+import { getSession } from "next-auth/react";
+import RouteGuard from "../utils/routeGuard";
 
 export default function MyApp(props: AppProps) {
 	const { Component, pageProps } = props;
@@ -23,23 +27,31 @@ export default function MyApp(props: AppProps) {
 					name="viewport"
 				/>
 			</Head>
-			<ThemeProvider theme={theme}>
-				<CssBaseline />
-				<ApolloProvider client={client}>
-					<div
-						style={{
-							backgroundColor: "whitesmoke",
-							alignItems: "center",
-							display: "flex",
-							flexDirection: "column",
-							justifyContent: "space-between",
-						}}
-					>
-						<AdminLayout />
-						<Component {...pageProps} />
-					</div>
-				</ApolloProvider>
-			</ThemeProvider>
+			<SessionProvider session={pageProps.session}>
+				<ThemeProvider theme={theme}>
+					<CssBaseline />
+					<ApolloProvider client={client}>
+						<div
+							style={{
+								backgroundColor: "whitesmoke",
+								alignItems: "center",
+								display: "flex",
+								flexDirection: "column",
+								justifyContent: "space-between",
+							}}
+						>
+							<RouteGuard>
+								{/* <DrawerProvider>
+							<Header />
+							<Component {...pageProps} />
+						</DrawerProvider> */}
+								<AdminLayout />
+								<Component {...pageProps} />
+							</RouteGuard>
+						</div>
+					</ApolloProvider>
+				</ThemeProvider>
+			</SessionProvider>
 		</React.Fragment>
 	);
 }
