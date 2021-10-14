@@ -37,6 +37,7 @@ const AccountMenu = () => {
 				<Tooltip title="Account settings">
 					<IconButton onClick={handleClick} size="small" sx={{ ml: 2 }}>
 						{status === "authenticated" ? (
+							//@ts-expect-error
 							<Avatar
 								sx={{ width: 32, height: 32 }}
 								src={profileImg}

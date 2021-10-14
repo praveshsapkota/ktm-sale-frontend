@@ -152,7 +152,7 @@ export const AddSubCatagoryForm: React.FC<props> = ({ data }) => {
 					},
 				}).then(
 					async (res) => {
-						console.log(res.data.S3ImageUpload);
+						// console.log("updatesubcatagoryImage",res.data.S3ImageUpload);
 						Update_SubCatagoryWithImage({
 							variables: {
 								subCatagoryImage: { set: res.data.S3ImageUpload },

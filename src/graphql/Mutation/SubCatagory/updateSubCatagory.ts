@@ -6,7 +6,7 @@ export const UpdateSubCatagoryWithImage = gql`
 		$newName: StringFieldUpdateOperationsInput!
 		$status: StringFieldUpdateOperationsInput!
 		$slug: StringFieldUpdateOperationsInput!
-		$subCatagoryImage: [StringFieldUpdateOperationsInput!]!
+		$subCatagoryImage: sub_catagoryUpdatesubCatagoryImageInput!
 		$seoTags: StringFieldUpdateOperationsInput!
 		$catagory: String!
 	) {
@@ -15,7 +15,7 @@ export const UpdateSubCatagoryWithImage = gql`
 				name: $newName 
 				slug: $slug 
 				status: $status 
-				seoTags: $seoTags 
+				seoTags: $seoTags
 				Catagory: { connect: { name: $catagory } }
 				subCatagoryImage: $subCatagoryImage 
 			}
