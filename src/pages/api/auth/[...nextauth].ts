@@ -165,11 +165,12 @@ export default NextAuth({
 			if (userAccount !== null) {
 				session.user = userAccount;
 			}
+			
 			else if (typeof token.user !== typeof undefined && (typeof session.user === typeof undefined
 				//@ts-expect-error
-				|| (typeof session.user !== typeof undefined && typeof session.user?.userId === typeof undefined))) {
+				|| (typeof session.user !== typeof undefined && typeof session.user.userId === typeof undefined))) {
 					//@ts-expect-error
-				session?.user = token.user;
+				session.user = token.user;
 			}
 			else if (typeof token !== typeof undefined) {
 				session.token = token;
