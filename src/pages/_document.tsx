@@ -2,7 +2,6 @@ import React from "react";
 import Document, { Html, Head, Main, NextScript } from "next/document";
 import { ServerStyleSheet } from "styled-components";
 import theme from "../styles/theme";
-import { SessionProvider } from "next-auth/react"
 
 
 // https://next.material-ui.com/styles/advanced/#next-js

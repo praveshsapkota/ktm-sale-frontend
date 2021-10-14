@@ -1,8 +1,6 @@
 import "../styles/globals.css";
-import { DrawerProvider } from "context/DrawerContext";
 import { ApolloProvider } from "@apollo/client";
 import { client } from "../utils/ApolloClient";
-import { Header } from "../layout/header/Header";
 
 import * as React from "react";
 import Head from "next/head";
@@ -12,7 +10,6 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import theme from "../styles/theme";
 import AdminLayout from "layout/header/layout";
 import { SessionProvider } from "next-auth/react";
-import { getSession } from "next-auth/react";
 import RouteGuard from "../utils/routeGuard";
 
 export default function MyApp(props: AppProps) {
