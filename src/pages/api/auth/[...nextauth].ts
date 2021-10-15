@@ -16,7 +16,7 @@ dotenv.config();
 let userAccount: any = null;
 
 export default NextAuth({
-// 	adapter: PrismaAdapter(prisma),
+	// adapter: PrismaAdapter(prisma),
 	providers: [
 		GithubProvider({
 			clientId: process.env.GITHUB_CLIENT_ID,
@@ -29,61 +29,61 @@ export default NextAuth({
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 		}),
 		//@ts-ignore
-		CredentialsProvider({
-			name: "Login",
-			credentials: {
-				email: {
-					label: "email",
-					type: "email",
-					placeholder: "ktmsale@gmail.com",
-				},
-				password: {
-					label: "password",
-					type: "password",
-					placeholder: "secure password",
-				},
-			},
-			async authorize(credentials) {
-				console.log("inside authorize", credentials);
-// 				const user = await prisma.user.findFirst({
-// 					where: {
-// 						email: credentials.email,
-// 						password: credentials.password,
-// 					},
-// 					select: {
-// 						name: true,
-// 						email: true,
-// 						address: true,
-// 						role: true,
-// 						varified: true,
-// 						contactNumber: true,
-// 						status: true,
-// 						emailVerified: true,
-// 						image: true,
-// 						billing: true,
-// 						CartItem: true,
-// 						sessions: true,
-// 						accounts: true,
-// 					},
-// 				});
-// 				if (user !== null) {
-// 					userAccount = user;
-// 					return user;
-// 				} else {
-// 					return null;
-// 				}
-			},
-		}),
+		// CredentialsProvider({
+		// 	name: "Login",
+		// 	credentials: {
+		// 		email: {
+		// 			label: "email",
+		// 			type: "email",
+		// 			placeholder: "ktmsale@gmail.com",
+		// 		},
+		// 		password: {
+		// 			label: "password",
+		// 			type: "password",
+		// 			placeholder: "secure password",
+		// 		},
+		// 	},
+		// 	async authorize(credentials) {
+		// 		console.log("inside authorize", credentials);
+		// 		const user = await prisma.user.findFirst({
+		// 			where: {
+		// 				email: credentials.email,
+		// 				password: credentials.password,
+		// 			},
+		// 			select: {
+		// 				name: true,
+		// 				email: true,
+		// 				address: true,
+		// 				role: true,
+		// 				varified: true,
+		// 				contactNumber: true,
+		// 				status: true,
+		// 				emailVerified: true,
+		// 				image: true,
+		// 				billing: true,
+		// 				CartItem: true,
+		// 				sessions: true,
+		// 				accounts: true,
+		// 			},
+		// 		});
+		// 		if (user !== null) {
+		// 			userAccount = user;
+		// 			return user;
+		// 		} else {
+		// 			return null;
+		// 		}
+		// 	},
+		// }),
 	],
 	secret: process.env.AUTH_SECRET,
-	cookie: {
-		secure: process.env.NODE_ENV && process.env.NODE_ENV === 'production',
-	},
-	// session: {
-	// 	// jwt: true,
-	// 	maxAge: 60,
-	// 	jwt: false,
+	// cookie: {
+	// 	secure: process.env.NODE_ENV && process.env.NODE_ENV === 'production',
 	// },
+	session: {
+		jwt: true,
+		maxAge: 60*60,
+		// jwt: false,
+	},
 	jwt: {
 		secret: process.env.JWT_SECRET,
 		encryption: true,
@@ -99,16 +99,16 @@ export default NextAuth({
 	callbacks: {
 		async signIn({ user, account, profile, email, credentials }) {
 			console.log("inside signin callback" , user);
-			
-			if (typeof user !== typeof undefined) {
-				if (user.role === "ADMIN") {
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
+			return true
+			// if (typeof user !== typeof undefined) {
+			// 	if (user.role === "ADMIN") {
+			// 		return true;
+			// 	} else {
+			// 		return false;
+			// 	}
+			// } else {
+			// 	return false;
+			// }
 		},
 		redirect : async({baseUrl,url})=>{
 			console.log( "inside redirict",baseUrl , url);
