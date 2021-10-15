@@ -11,7 +11,7 @@ import adapter from "next-auth/adapters";
 // import {Register} from "../../../graphql/Mutation/Register"
 // import {client} from "../../../utils/ApolloClient"
 dotenv.config();
-export const prisma = new PrismaClient();
+// export const prisma = new PrismaClient();
 
 let userAccount: any = null;
 
@@ -45,33 +45,33 @@ export default NextAuth({
 			},
 			async authorize(credentials) {
 				console.log("inside authorize", credentials);
-				const user = await prisma.user.findFirst({
-					where: {
-						email: credentials.email,
-						password: credentials.password,
-					},
-					select: {
-						name: true,
-						email: true,
-						address: true,
-						role: true,
-						varified: true,
-						contactNumber: true,
-						status: true,
-						emailVerified: true,
-						image: true,
-						billing: true,
-						CartItem: true,
-						sessions: true,
-						accounts: true,
-					},
-				});
-				if (user !== null) {
-					userAccount = user;
-					return user;
-				} else {
-					return null;
-				}
+// 				const user = await prisma.user.findFirst({
+// 					where: {
+// 						email: credentials.email,
+// 						password: credentials.password,
+// 					},
+// 					select: {
+// 						name: true,
+// 						email: true,
+// 						address: true,
+// 						role: true,
+// 						varified: true,
+// 						contactNumber: true,
+// 						status: true,
+// 						emailVerified: true,
+// 						image: true,
+// 						billing: true,
+// 						CartItem: true,
+// 						sessions: true,
+// 						accounts: true,
+// 					},
+// 				});
+// 				if (user !== null) {
+// 					userAccount = user;
+// 					return user;
+// 				} else {
+// 					return null;
+// 				}
 			},
 		}),
 	],
