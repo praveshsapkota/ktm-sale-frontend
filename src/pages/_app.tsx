@@ -1,7 +1,6 @@
 import "../styles/globals.css";
 import { ApolloProvider } from "@apollo/client";
 import { client } from "../utils/ApolloClient";
-
 import * as React from "react";
 import Head from "next/head";
 import { AppProps } from "next/app";
@@ -11,6 +10,7 @@ import theme from "../styles/theme";
 import AdminLayout from "layout/header/layout";
 import { SessionProvider } from "next-auth/react";
 import RouteGuard from "../utils/routeGuard";
+
 
 export default function MyApp(props: AppProps) {
 	const { Component, pageProps } = props;

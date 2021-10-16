@@ -69,7 +69,8 @@ export const SnackbarComponent = () => {
                 );
             }
             default:
-                console.log("hellow")
+                null
+                // console.log("hellow")
         }
     };
 
@@ -84,7 +85,6 @@ export const SnackbarComponent = () => {
             >
                 {AlertDiv()}
             </Snackbar>
-            {console.log(AlertDiv(), "jj")}
         </div>
     );
 };

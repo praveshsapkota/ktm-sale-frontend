@@ -16,7 +16,7 @@ import { useSession, signOut } from "next-auth/react";
 
 const AccountMenu = () => {
 	const { data, status } = useSession();
-	console.log(data?.user?.image, "session");
+	// console.log(data?.user?.image, "session");
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
