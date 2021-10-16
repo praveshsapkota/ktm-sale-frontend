@@ -1,19 +1,18 @@
 import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
-import FacebookProvider from "next-auth/providers/facebook";
+// import FacebookProvider from "next-auth/providers/facebook";
 import CredentialsProvider from "next-auth/providers/credentials";
 import dotenv from "dotenv";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-// import { prisma } from "../../../context/prismaContext";
 import { PrismaClient } from "@prisma/client";
-import adapter from "next-auth/adapters"
-// import {Register} from "../../../graphql/Mutation/Register"
-// import {client} from "../../../utils/ApolloClient"
+import {sign} from "jsonwebtoken"
 dotenv.config();
 export const prisma = new PrismaClient();
 
-let userAccount: any = null
+
+let userAccount: any = null;
+export var apiToken: any = null;
 
 export default NextAuth({
 	adapter: PrismaAdapter(prisma),
@@ -40,15 +39,8 @@ export default NextAuth({
 				password: {
 					label: "password",
 					type: "password",
-					placeholder: "secure password",
+					placeholder: "your password",
 				},
-				// full_name: { label: "name", type: "text", placeholder: "your name" },
-				// contact_no: {
-				// 	label: "phone number",
-				// 	type: "text",
-				// 	placeholder: "mobile no",
-				// },
-				// address: { label: "address", type: "text", placeholder: "address" },
 			},
 			async authorize(credentials) {
 				console.log("inside authorize", credentials);
@@ -70,54 +62,16 @@ export default NextAuth({
 						billing: true,
 						CartItem: true,
 						sessions: true,
-						accounts: true
-					}
+						accounts: true,
+					},
 				});
-				// console.log("prismaUser" , user);
 				if (user !== null) {
 					userAccount = user;
 					return user;
-				}
-				else {
+				} else {
 					return null;
 				}
-
-			}
-
-			// //@ts-ignore
-			// async authorize(credentials, _req) {
-			// 	console.log(credentials);
-			// 	const Register_res = await client.mutate({
-			// 		mutation : Register,
-			// 		variables :{
-			// 			name:  credentials.full_name,
-			// 			email: 	credentials.email	,
-			// 			password: credentials.password,
-			// 			address: credentials.address,
-			// 			contactNo: credentials.contact_no,
-			// 		}
-			// 	})
-			// 	console.log("Register_response",Register_res );
-			// You need to provide your own logic here that takes the credentials
-			// submitted and returns either a object representing a user or value
-			// that is false/null if the credentials are invalid.
-			// e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
-			// You can also use the `req` object to obtain additional parameters
-			// (i.e., the request IP address)
-			// const res = await fetch("/your/endpoint", {
-			// 	method: "POST",
-			// 	body: JSON.stringify(credentials),
-			// 	headers: { "Content-Type": "application/json" },
-			// });
-			// const user = await res.json();
-
-			// // If no error and we have user data, return it
-			// if (res.ok && user) {
-			// 	return user;
-			// }
-			// // Return null if user data could not be retrieved
-			// return null;
-			// }
+			},
 		}),
 	],
 	secret: process.env.AUTH_SECRET,
@@ -125,66 +79,50 @@ export default NextAuth({
 		secure: process.env.NODE_ENV && process.env.NODE_ENV === 'production',
 	},
 	session: {
-		jwt: true,
-		maxAge: 30 * 24 * 60 * 60
+		// jwt: true,
+		maxAge: 60 * 60,
+		updateAge: 60 * 60 * 24
+		// jwt: false,
 	},
 	jwt: {
 		secret: process.env.JWT_SECRET,
 		encryption: true,
 	},
 	pages: {
-		signIn: "/test"
+		signIn: "/Login",
+	},
+	theme: {
+		colorScheme: "dark",
+		logo: "/images/2.png",
 	},
 	callbacks: {
-		// async signIn({user, account, profile, email, credentials}) {
-		//     if (typeof user.userId !== typeof undefined)
-		//     {
-		//         if (user.isActive === '1')
-		//         {
-		//             return true;
-		//         }
-		//         else
-		//         {
-		//             return false;
-		//         }
-		//     }
-		//     else
-		//     {
-		//         return false;
-		//     }
-		// },
-		async jwt({ token, user, account, profile, isNewUser }) {
-			console.log("inside user", token, user);
+		signIn : async ({ user})=>{
+			console.log("inside signin callback", user);
+			// return true
 			if (typeof user !== typeof undefined) {
-				token.user = user;
+				if (user.role === "ADMIN") {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
 			}
-			return token;
 		},
-		async session({ session, token }) {
-			console.log("inside session", token, session);
+		redirect: async ({ baseUrl, url }) => {
+			return baseUrl;
+		},
+		session: async ({ session, token, user }) => {
 			if (userAccount !== null) {
 				session.user = userAccount;
 			}
-			
-			else if (typeof token.user !== typeof undefined && (typeof session.user === typeof undefined
-				//@ts-expect-error
-				|| (typeof session.user !== typeof undefined && typeof session.user.userId === typeof undefined))) {
-					//@ts-expect-error
-				session.user = token.user;
-			}
-			else if (typeof token !== typeof undefined) {
-				session.token = token;
-			}
+			//@ts-ignore
+			session.user.role = user.role
+			//@ts-expect-error
+			const signed_jwt =  sign(session , process.env.JWT_BACKEND_SECRET )
+			//@ts-expect-error
+			session.user.apiAuthToken = signed_jwt;
 			return session;
 		},
-	}
-
+	},
 });
-
-// credentials: {
-//     email: { label: "email", type: "email", placeholder: "ktmsale@gmail.com" },
-//     password : { label: "password", type: "password", placeholder: "secure password" },
-//     full_name : { label: "name", type: "text", placeholder: "your name" },
-//     contact_no : { label: "phone number", type: "text", placeholder: "mobile no" },
-//     address : { label: "address", type: "text", placeholder: "address" },
-// },
