@@ -75,9 +75,9 @@ export default NextAuth({
 		}),
 	],
 	secret: process.env.AUTH_SECRET,
-	cookie: {
-		secure: process.env.NODE_ENV && process.env.NODE_ENV === 'production',
-	},
+	// cookie: {
+	// 	secure: process.env.NODE_ENV && process.env.NODE_ENV === 'production',
+	// },
 	session: {
 		// jwt: true,
 		maxAge: 60 * 60,
