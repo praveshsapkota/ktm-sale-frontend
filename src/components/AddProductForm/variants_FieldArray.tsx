@@ -18,13 +18,13 @@ import { datass } from "context/data";
 let renderCount = 0;
 interface Column {
 	id:
-	| "Variant Name"
-	| "Sku"
-	| "Price"
-	| "Sale Price"
-	| "Quantity"
-	| "Discount Percentage"
-	| "Attributes";
+		| "Variant Name"
+		| "Sku"
+		| "Price"
+		| "Sale Price"
+		| "Quantity"
+		| "Discount Percentage"
+		| "Attributes";
 	label: string;
 	minWidth?: number;
 	align?: "center" | "left";
@@ -107,21 +107,24 @@ export default function Fields({
 	const handleOpen = () => setOpenAttrModal(true);
 	const handleClose = () => setOpenAttrModal(false);
 	renderCount++;
-	const ModalForAttributes = () => {
-		return (
-			<AttributeModal
-				// key={row.id}
-				reset={reset}
-				getValues={getValues}
-				VariantIndex={indexState}
-				ModalState={openAttrModal}
-				handleClose={handleClose}
-				handleOpen={handleOpen}
-				control={control}
-				register={register}
-				unregister={unregister}
-			/>
-		);
+	const ModalForAttributes = (index: number) => {
+		if (index === indexState && openAttrModal) {
+			return (
+				<AttributeModal
+					// key={row.id}
+					reset={reset}
+					getValues={getValues}
+					VariantIndex={indexState}
+					ModalState={openAttrModal}
+					handleClose={handleClose}
+					handleOpen={handleOpen}
+					control={control}
+					register={register}
+					unregister={unregister}
+				/>
+			);
+		}
+		return null;
 	};
 
 	return (
@@ -227,14 +230,16 @@ export default function Fields({
 													<span>
 														[
 														{getValues(`variants[${index}].attributes`)
-															? getValues(`variants[${index}].attributes`).length
+															? getValues(`variants[${index}].attributes`)
+																	.length
 															: 0}
 														]
 													</span>
 												</Button>
 											</IconButton>
 											{
-												openAttrModal ? ModalForAttributes() : "" // <AttributeModal
+												openAttrModal ? ModalForAttributes(index) : ""
+												// <AttributeModal
 												// 	// key={row.id}
 												// 	reset={reset}
 												// 	getValues={getValues}

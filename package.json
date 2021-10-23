@@ -39,6 +39,7 @@
 		"@types/js-cookie": "^3.0.0",
 		"antd": "^4.16.7",
 		"apollo-upload-client": "^16.0.0",
+		"bcryptjs": "^2.4.3",
 		"dotenv": "^10.0.0",
 		"graphql": "^15.5.1",
 		"js-cookie": "^3.0.1",
@@ -54,6 +55,7 @@
 	},
 	"devDependencies": {
 		"@types/apollo-upload-client": "^14.1.0",
+		"@types/bcryptjs": "^2.4.2",
 		"@types/jsonwebtoken": "^8.5.5",
 		"@types/react": "17.0.14",
 		"@types/styled-components": "^5.1.11",

@@ -6,7 +6,7 @@ import {
 import { createUploadLink } from "apollo-upload-client";
 import { onError } from "@apollo/client/link/error";
 
-const uri = "http://localhost:4000/";
+const uri = "http://localhost:5000/";
 
 const authMiddleware = new ApolloLink( (operation, forward) => {
 	// add the authorization to the headers

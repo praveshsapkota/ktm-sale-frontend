@@ -12,6 +12,7 @@ datasource db {
   provider = "postgresql"
   // url      = "postgresql://ethan:qwerty@localhost:54321/postgresdb?schema=public"
   url = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 
@@ -34,41 +35,41 @@ model Account {
   oauth_token_secret String?
   oauth_token        String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
 
   @@unique([provider, providerAccountId])
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                  String       @id @default(cuid())
+  sessionToken        String       @unique
+  userId              String
+  expires             DateTime
+  user                User         @relation(fields: [userId], references: [id])
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  billing       String?
-  address       String?
-  contactNumber String?    
-  varified      Boolean?
-  password      String?
-  role          User_role     @default(USER)
-  status        User_status   @default(INACTIVE)
-  CartItem      CartItem?
+  id                  String        @id @default(cuid())
+  name                String?
+  email               String?       @unique
+  emailVerified       DateTime?
+  image               String?
+  password            String?
+  accounts            Account[]
+  sessions            Session[]
+  billing             String?
+  address             String?
+  contactNumber       String?    
+  varified            Boolean?
+  role                User_role     @default(USER)
+  status              User_status   @default(INACTIVE)
+  Cart          Cart?
 }
 
 model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
+  identifier          String
+  token               String       @unique
+  expires             DateTime
 
   @@unique([identifier, token])
 }
@@ -108,79 +109,96 @@ enum User_status {
   BLOCKED
 }
 
-model CartItem {
-  id       String @id 
-  item     String
-  quantity Int
-  userId   String
-  User     User   @relation(fields: [userId], references: [id])
-  products Product[]
-}
-
 model Category {
-  createdAt DateTime  @default(now())
-  id        String    @id @default(cuid())
-  name      String    @unique
-  catagoryImage     String[]
-  seoTags String
-  status String
-  slug      String    @unique
-  updatedAt DateTime  @default(now())
+  createdAt             DateTime        @default(now())
+  id                    String          @id @default(cuid())
+  name                  String          @unique
+  catagoryImage         String[]
+  seoTags               String
+  status                String
+  slug                  String          @unique
+  updatedAt             DateTime        @default(now())
   sub_Catagory sub_catagory[]
 }
 
 model sub_catagory {
-  createdAt DateTime  @default(now())
-  id        String    @id @default(cuid())
-  name      String    @unique
-  status    String
-  subCatagoryImage     String[]
-  seoTags   String
-  slug      String    @unique
-  updatedAt DateTime  @default(now())
-  catagoryid String
-  Catagory   Category @relation(fields: [catagoryid], references: [id])
-  Products   Product[]
+  createdAt             DateTime        @default(now())
+  id                    String          @id @default(cuid())
+  name                  String          @unique     
+  status                String
+  subCatagoryImage      String[]
+  seoTags               String
+  slug                  String          @unique
+  updatedAt             DateTime        @default(now())
+  catagoryid            String
+  Catagory              Category        @relation(fields: [catagoryid], references: [id])
+  Products              Product[]
 }
 
 model Product {
-  id            String         @id @default(cuid())
-  name          String
-  slug          String         @unique
-  sku           String?        
-  price         Int?
-  productImage  String[]
-  product_thumbnail String
-  description   String
-  unit          Int?
-  discount      Int?
-  salePrice     Int?
-  variants       Json[]
-  seoTags       String
-  status        String
-  updatedAt     DateTime       @default(now())
-  cartid        String?
-  subcatagoryId  String
-  productenquerieID String?
-  subCatagory      sub_catagory     @relation(fields: [subcatagoryId], references: [id])
-  cart  CartItem? @relation(fields: [cartid], references: [id])
-  productEnquerie Product_Enquerie? @relation(fields: [productenquerieID],references:[id])
+  id                    String          @id @default(cuid())
+  name                  String
+  slug                  String          @unique
+  sku                   String?        
+  price                 Int?
+  productImage          String[]
+  product_thumbnail     String
+  description           String
+  unit                  Int?
+  discount              Int?
+  salePrice             Int?
+  variants              Json[]
+  seoTags               String
+  status                String
+  updatedAt             DateTime          @default(now())
+  subcatagoryId         String
+  subCatagory           sub_catagory?     @relation(fields: [subcatagoryId], references: [id])
+  cartid                String?
+  cartIteam             CartIteam?        @relation(fields: [cartid], references: [id])        
+  enquiredProductId     String?
+  enquiredProduct       enquiredProduct? @relation(fields: [enquiredProductId],references:[id])
 
 }
 
-model Product_Enquerie {
-  id            String @id @default(cuid())
-  email         String
-  company_name  String
-  address       String
-  country       String
-  state         String
-  phoneNumber   String
-  products      Product[]
-  unit          Int
-  orderFrequency String
+model Cart {
+  id                    String             @id @default(cuid())
+  iteams              CartIteam[]
+  userId                String
+  User                  User               @relation(fields: [userId], references: [id])
+}
 
+model CartIteam {
+  id                    String              @id @default(cuid())
+  quantity              Int
+  Product             Product?
+  cartId                String?
+  Cart                  Cart?               @relation(fields: [cartId],references:[id])
+}
+
+
+
+
+//product enquerie 
+model Product_Enquerie {
+  id                    String              @id @default(cuid())
+  email                 String?
+  company_name          String?
+  address               String?
+  country               String?
+  state                 String?
+  phoneNumber           String?
+  EnquiredProducts      enquiredProduct[]
+  unit                  Int?
+  orderFrequency        String?
 } 
+
+model enquiredProduct {
+  id                    String               @id @default(cuid())
+  productname           Product?
+  quantity              Int?
+  product_EnquerieId    String?
+  productEnquerie       Product_Enquerie?    @relation(fields: [product_EnquerieId], references:[id])
+}
 
 
 

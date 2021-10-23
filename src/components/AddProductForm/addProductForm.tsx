@@ -55,6 +55,7 @@ type FormValues = {
 			no_of_stocks: number | null;
 			salePrice: number | null;
 			discountPercentage: number | null;
+			variantImage : string | null;
 			attributes: [
 				{
 					attrName: string;
