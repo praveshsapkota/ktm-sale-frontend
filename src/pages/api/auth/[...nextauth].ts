@@ -64,9 +64,9 @@ export default async function auth(req: any, res: any) {
 							emailVerified: true,
 							image: true,
 							billing: true,
-							CartItem: true,
 							sessions: true,
 							accounts: true,
+							Cart : true
 						},
 					});
 					if (user !== null) {
