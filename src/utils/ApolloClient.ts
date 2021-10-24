@@ -6,8 +6,9 @@ import {
 import { createUploadLink } from "apollo-upload-client";
 import { onError } from "@apollo/client/link/error";
 
-const uri = "http://localhost:5000/";
-
+// const uri = "https://ktmsale-backend.herokuapp.com/";
+const uri = process.env.BACKEND_URL
+// console.log(uri);
 const authMiddleware = new ApolloLink( (operation, forward) => {
 	// add the authorization to the headers
 	
