@@ -7,7 +7,7 @@ export const SocialLinkContainer = styled.div`
 	max-height: 350px;
 	margin-top: 3vh;
 	align-items: flex-start;
-	justify-content: space-between;
+	justify-content: space-around;
 `;
 
 export const SocialLoginLinks = styled.div`
