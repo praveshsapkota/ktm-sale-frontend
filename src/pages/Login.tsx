@@ -138,7 +138,7 @@ const Login: React.FC<props> = () => {
 						</SocialLoginLinks>
 					) : null}
 
-					{providers?.github ?  (
+					{/* {providers?.github ?  (
 						<SocialLoginLinks
 							style={{ backgroundColor: "white" }}
 							onClick={() => {
@@ -157,9 +157,9 @@ const Login: React.FC<props> = () => {
 								</SocialLoginText>
 							</SocialLoginImage>
 						</SocialLoginLinks>
-					) : null}
+					) : null} */}
 
-					<SocialLoginLinks>
+					{/* <SocialLoginLinks>
 						<SocialLoginImage>
 							<Image
 								width="40px"
@@ -169,7 +169,7 @@ const Login: React.FC<props> = () => {
 							/>
 							<SocialLoginText>Continue with Apple</SocialLoginText>
 						</SocialLoginImage>
-					</SocialLoginLinks>
+					</SocialLoginLinks> */}
 					<SocialLoginLinks style={{ backgroundColor: "#3b5998" }}>
 						<SocialLoginImage>
 							{/* <Image width="40px" height="40px" src="https://img.icons8.com/ios/50/000000/facebook--v1.png" alt="f" /> */}

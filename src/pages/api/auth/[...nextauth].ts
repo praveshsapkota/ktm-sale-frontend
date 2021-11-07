@@ -16,10 +16,10 @@ export default async function auth(req: any, res: any) {
 	return await NextAuth(req, res, {
 		adapter: PrismaAdapter(prisma),
 		providers: [
-			GithubProvider({
-				clientId: process.env.GITHUB_CLIENT_ID,
-				clientSecret: process.env.GITHUB_CLIENT_SECRET,
-			}),
+			// GithubProvider({
+			// 	clientId: process.env.GITHUB_CLIENT_ID,
+			// 	clientSecret: process.env.GITHUB_CLIENT_SECRET,
+			// }),
 			GoogleProvider({
 				//@ts-ignore
 				clientId: process.env.GOOGLE_CLIENT_ID,
