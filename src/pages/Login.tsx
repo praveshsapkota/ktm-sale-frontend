@@ -19,7 +19,13 @@ import {
 	OutlinedInput,
 } from "@material-ui/core";
 import Image from "next/image";
-import { signIn, signOut, useSession, getProviders, getCsrfToken } from "next-auth/react";
+import {
+	signIn,
+	signOut,
+	useSession,
+	getProviders,
+	getCsrfToken,
+} from "next-auth/react";
 import {
 	SocialLoginLinks,
 	SocialLoginText,
@@ -35,15 +41,15 @@ type FormValues = {
 	csrfToken: string;
 };
 
-interface props { }
+interface props {}
 
 const Login: React.FC<props> = () => {
 	// const { data, status } = useSession()
 	const [providers, setProviders] = React.useState<any>();
 	const [csrfToken, setCsrfToken] = React.useState<any>(async () => {
-		const csrf = await getCsrfToken()
+		const csrf = await getCsrfToken();
 		console.log(csrf);
-		setCsrfToken(csrf)
+		setCsrfToken(csrf);
 	});
 
 	const [showPassword, setShowPassword] = React.useState(false);
@@ -75,10 +81,13 @@ const Login: React.FC<props> = () => {
 		// console.log(Number(value.price));
 	}, [value]);
 	const onSubmit: SubmitHandler<FormValues> = async (value: any) => {
-		const res = await fetch("http://localhost:3000/api/auth/callback/credentials", {
-			method: "post",
-			body: value
-		})
+		const res = await fetch(
+			"http://localhost:3000/api/auth/callback/credentials",
+			{
+				method: "post",
+				body: value,
+			}
+		);
 		console.log(res);
 	};
 
@@ -128,6 +137,28 @@ const Login: React.FC<props> = () => {
 							</SocialLoginImage>
 						</SocialLoginLinks>
 					) : null}
+
+					{providers?.github ?  (
+						<SocialLoginLinks
+							style={{ backgroundColor: "white" }}
+							onClick={() => {
+								signIn(providers.github.id);
+							}}
+						>
+							<SocialLoginImage>
+								<Image
+									width="40px"
+									height="40px"
+									src="https://img.icons8.com/color/48/000000/google-logo.png"
+									alt="G"
+								/>
+								<SocialLoginText style={{ color: "black" }}>
+									Continue with Github
+								</SocialLoginText>
+							</SocialLoginImage>
+						</SocialLoginLinks>
+					) : null}
+
 					<SocialLoginLinks>
 						<SocialLoginImage>
 							<Image
@@ -193,9 +224,16 @@ const Login: React.FC<props> = () => {
 					</Divider>
 				</div>
 				{providers?.credentials ? (
-					<form method="post" action="http://localhost:3000/api/auth/callback/credentials">
+					<form
+						method="post"
+						action="http://localhost:3000/api/auth/callback/credentials"
+					>
 						<CredentialsLogin>
-							<input {...register("csrfToken")} type="hidden" defaultValue={csrfToken} />
+							<input
+								{...register("csrfToken")}
+								type="hidden"
+								defaultValue={csrfToken}
+							/>
 							<div
 								className="email"
 								style={{

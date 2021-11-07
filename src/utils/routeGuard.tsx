@@ -36,6 +36,7 @@ const RouteGuard: FC = ({ children }) => {
 		return null;
 	}
 	return <Login />;
+	// return children as ReactElement; 
 };
 
 export default RouteGuard;

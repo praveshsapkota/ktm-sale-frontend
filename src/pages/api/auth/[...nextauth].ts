@@ -26,7 +26,6 @@ export default async function auth(req: any, res: any) {
 				//@ts-ignore
 				clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 				authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth?prompt=consent&access_type=offline&response_type=code',
-
 			}),
 			//@ts-ignore
 			CredentialsProvider({
@@ -87,6 +86,7 @@ export default async function auth(req: any, res: any) {
 				},
 			}),
 		],
+		debug : true,
 		secret: process.env.AUTH_SECRET,
 		// cookie: {
 		// 	secure: process.env.NODE_ENV && process.env.NODE_ENV === 'production',
@@ -111,16 +111,18 @@ export default async function auth(req: any, res: any) {
 		callbacks: {
 			signIn: async ({ user }) => {
 				console.log("inside signin callback", user);
-				return true
-				// if (typeof user !== typeof undefined) {
-				// 	if (user.role === "ADMIN") {
-				// 		return true;
-				// 	} else {
-				// 		return false;
-				// 	}
-				// } else {
-				// 	return false;
-				// }
+				// return true
+				
+				if (typeof user !== typeof undefined) {
+					// if (user.role === "ADMIN") {
+					// 	return true;
+					// } else {
+					// 	return false;
+					// }
+					return true
+				} else {
+					return false;
+				}
 			},
 			redirect: async ({ baseUrl, url }) => {
 				return baseUrl;

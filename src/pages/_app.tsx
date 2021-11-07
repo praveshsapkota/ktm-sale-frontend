@@ -24,6 +24,7 @@ export default function MyApp(props: AppProps) {
 					name="viewport"
 				/>
 				<meta name="google-site-verification" content="bXJBJ4x2Qc6qYVGsx3CnJIuXqifUwu879DKzgfDV14E" />
+				<script src="https://apis.google.com/js/platform.js" async defer></script>
 			</Head>
 			<SessionProvider session={pageProps.session}>
 				<ThemeProvider theme={theme}>
